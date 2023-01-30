@@ -1,0 +1,396 @@
+{% extends 'base.html '%}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{%block head %}
+<script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
+{% endblock %}
+{% block pagecontent %}
+<br>
+
+{% if log_user != 'admin' %}
+<div class="col-md-4">
+
+  <div class="modal fade" id="modal_time_out" tabindex="-1" role="dialog" aria-labelledby="modal_time_out"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <div class="card card-plain">
+            <div class="card-header pb-0 text-left">
+              <h5 class="">Time Out</h5>
+              <p class="mb-0">Enter your work done</p>
+            </div>
+            <div class="card-body">
+              <form role="form text-left" action="/time_out" method="POST">
+
+                <input type="text" name="attendanceID" id="attendanceID" value="{{current_timed.attendanceID}}" readonly
+                  hidden>
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">Work done</label>
+                  <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)"
+                    name="work_done" id="work_done">
+                </div>
+
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0"
+                    onClick="return emptywork()">Time out</button>
+                </div>
+              </form>
+            </div>
+            <div class="card-footer text-center pt-0 px-lg-2 px-1">
+              <p class="mb-4 text-sm mx-auto">
+                Note: Always put a reasonable work done. Do not leave this field empty.
+
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="row ms-2 me-2">
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+          class="icon icon-lg icon-shape bg-gradient-info shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+          <i class="fa-solid fa-calendar-day"></i>
+
+        </div>
+        <div class="text-end pt-1">
+          <p class="text-sm mb-0 text-capitalize">Rendered Hours Today</p>
+          <h4 class="mb-0">
+            {% if today_totalhours is defined %}
+            {{today_totalhours.total_rendered}}
+            {% endif%}
+          </h4>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0">{{now.strftime('%A | %B %d, %Y') }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+          class="icon icon-lg icon-shape bg-gradient-info shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+          <i class="fa-solid fa-calendar-week"></i>
+        </div>
+        <div class="text-end pt-1">
+          <p class="text-sm mb-0 text-capitalize">Rendered Hours This Week</p>
+          <h4 class="mb-0">
+            {% if week_totalhours is defined %}
+            {{week_totalhours.total_rendered}}
+            {% endif%}
+          </h4>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0">{{now.strftime('Week %W of %Y') }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+          class="icon icon-lg icon-shape bg-gradient-info shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+          <i class="fa-regular fa-calendar-days"></i>
+        </div>
+        <div class="text-end pt-1">
+          <p class="text-sm mb-0 text-capitalize">Rendered Hours This Month</p>
+          <h4 class="mb-0">
+            {% if month_totalhours is defined %}
+            {{month_totalhours.total_rendered}}
+            {% endif%}
+          </h4>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0">{{now.strftime('%B %Y') }}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="row mt-4 ms-2 me-2">
+  <div class="col-lg-4 col-md-6 mt-4 mb-4">
+    <div class="card z-index-2 ">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+        <div class="bg-gradient-info shadow-dark border-radius-lg py-3 pe-1">
+          <center>
+            <img src="{{url_for('static', filename='/images/time_in.png')}}" alt="" class="time_img">
+          </center>
+        </div>
+      </div>
+      <div class="card-body">
+        <h6 class="mb-0 ">Time In</h6>
+        <p class="text-sm "> Status: <span>
+            {% if current_timed is not defined%}
+            {% elif current_timed is defined and current_timed is not none%}
+            {%if current_timed is defined and current_timed.signature_time_in is none%}
+            <span class="badge bg-gradient-danger">To be signed</span>
+            {% endif %}
+            {% if current_timed is defined and current_timed.signature_time_in is not none%}
+            <span class="badge bg-gradient-success">Signed</span>
+            {% endif %}
+            {% endif %}
+
+          </span></p>
+        <form action="/time_in" method="POST">
+          <input type="text" name="id_number" id="id_number" value="{{accountuser.id_number}}" readonly hidden>
+          {% if current_timed is defined and current_timed is not none%}
+          <button type="submit" class="btn btn-outline-secondary btn-lg w-100" disabled>Timed In</button>
+          {%else %}
+          <button type="submit" class="btn btn-outline-info btn-lg w-100">Time In</button>
+          {% endif %}
+        </form>
+        <hr class="dark horizontal">
+        <div class="d-flex ">
+
+          <i class="material-icons text-sm my-auto me-1">schedule</i>
+          <p class="mb-0 text-sm"> <span>
+              {% if current_timed is defined and current_timed is not none%}
+              Timed in at {{current_timed.time_in.strftime('%I:%M %p | %B %d, %Y' )}}
+              {%else %}
+              Haven't timed in yet
+              {% endif %}
+            </span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-6 mt-4 mb-4">
+    <div class="card z-index-2  ">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+        <div class="bg-gradient-info shadow-dark border-radius-lg py-3 pe-1">
+          <center>
+            <img src="{{url_for('static', filename='/images/time_out.png')}}" alt="" class="time_img">
+          </center>
+        </div>
+      </div>
+      <div class="card-body">
+        <h6 class="mb-0 "> Time Out </h6>
+        <p class="text-sm ">Status:
+          {% if current_timed is defined and current_timed is not none %}
+          {% if current_timed.signature_time_in is none and current_timed.time_in is none%}
+          Waiting for time in to be signed
+          {% endif%}
+          {% if current_timed.signature_time_in is not none and current_timed.time_in is not none and
+          current_timed.time_out is not none and current_timed.signature_time_out is none %}
+          <span class="badge bg-gradient-danger">To be Signed</span>
+          {% endif %}
+          {% endif%}
+
+        </p>
+        {% if current_timed is defined and current_timed is not none %}
+        {% if current_timed.signature_time_in is not none and current_timed.time_in is not none and
+        current_timed.time_out is none %}
+        <button type="button" class="btn btn-outline-info btn-lg w-100" data-bs-toggle="modal"
+          data-bs-target="#modal_time_out">Time Out</button>
+        {% else %}
+        <button type="button" class="btn btn-outline-secondary btn-lg w-100" disabled>Timed Out</button>
+        {% endif %}
+        {% else %}
+        <button type="button" class="btn btn-outline-secondary btn-lg w-100" disabled>Time Out</button>
+        {% endif %}
+        <hr class="dark horizontal">
+        <div class="d-flex ">
+          <i class="material-icons text-sm my-auto me-1">schedule</i>
+          <p class="mb-0 text-sm">
+            {% if current_timed is defined and current_timed is not none %}
+            {% if current_timed.time_out is not none %}
+            Timed out at {{current_timed.time_out.strftime('%I:%M %p | %B %d, %Y')}}
+            {% endif %}
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+            <h6 class="text-white ps-3">Attendance for {{now.strftime('%A | %B %d, %Y') }} </h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time In
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Countersigned By</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Work Done
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Out
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Countersigned By</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time
+                    Rendered</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for current in current_attendance %}
+                <tr>
+
+                  <td class="align-middle text-center">
+                    <p class="text-xs font-weight-bold mb-0">{{current.time_in.strftime('%I:%M %p')}}</p>
+                    <p class="text-xs text-secondary mb-0">{{current.time_in.strftime('%B %d, %Y')}}</p>
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if current.countersign_time_in == each.id_number%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if each.positionID == position.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if current.countersign_time_in is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No countersign</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == current.signature_time_in%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if current.signature_time_in is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No sign yet</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% if current.work_done is not none%}
+                    <span class="text-secondary text-xs font-weight-bold">{{current.work_done}}</span>
+                    {% else %}
+                    <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No work
+                        done yet</span></span>
+
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% if current.time_out is not none %}
+                    <p class="text-xs font-weight-bold mb-0">{{current.time_out.strftime('%I:%M %p')}}</p>
+                    <p class="text-xs text-secondary mb-0">{{current.time_out.strftime('%B %d, %Y')}}</p>
+                    {% else %}
+                    <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No time
+                        out yet</span></span>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == current.countersign_time_out%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if current.countersign_time_out is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No countersign</span>
+                    </p>
+                    {% endif %}
+                  </td>
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == current.signature_time_out%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if current.signature_time_out is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No sign yet</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+
+                    {% if current.time_rendered is not none %}
+                    <span class="text-secondary text-xs font-weight-bold">{{current.time_rendered}}</span>
+                    {% else %}
+                    <span class="text-secondary text-xs font-weight-bold">
+                      <span class="badge bg-gradient-danger">Incomplete</span>
+                    </span>
+                    {% endif %}
+                  </td>
+
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,349 @@
+----------------------------------------
+LAKANDIWA LOGGING
+created at 18/01/2023 05:16:30
+
+
+
+
+
+
+----------------------------------------
+New position added | 18/01/2023 05:16:30
+positionID : c22dc245
+position : Creative Director
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 18/01/2023 05:17:54
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2000-02-23
+PositionID: eb63899d
+Contact Number: 09223738269
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 18/01/2023 05:30:59
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2023-01-10
+PositionID: eb63899d
+Contact Number: 09322551029
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 22/01/2023 14:27:04
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2000-02-23
+PositionID: eb63899d
+Contact Number: 09223738269
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 26/01/2023 22:04:57
+positionID : b3518900
+position : Planning and Research Director
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 26/01/2023 22:06:34
+ID Number: 19897826
+Name:ANGELA SOLANTE TORREST
+Birthdate: 2001-03-26
+PositionID: b3518900
+Contact Number: 09452284272
+----------------------------------------
+
+
+
+
+----------------------------------------
+Position 19897826 deleted | 27/01/2023 12:19:32
+Account: 19897826
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:28:46
+positionID : 7d45d74e
+position : Editor in Chief
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:29:02
+positionID : fe4d0272
+position : Managing Director
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:29:20
+positionID : bc343cdb
+position : Finance Manager
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:30:01
+positionID : 22b686ad
+position : Feature Editor
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:30:12
+positionID : e7eebb52
+position : Online Editor
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:30:24
+positionID : 7c3e93d3
+position : Art Editor
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account TIEMPO,NATHANIEL C. with ID_Number: 19924414 deleted | 27/01/2023 12:30:54
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:33:03
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2000-02-23
+PositionID: eb63899d
+Contact Number: 09223738269
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:33:02
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2000-02-23
+PositionID: eb63899d
+Contact Number: 09223738269
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account TIEMPO,NATHANIEL C. with ID_Number: 19924414 deleted | 27/01/2023 12:33:13
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:33:51
+positionID : dad600ad
+position : Photo Editor
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New position added | 27/01/2023 12:34:02
+positionID : 462b4ec9
+position : Graphics Editor
+position level : Editorial Board
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:39:39
+ID Number: 19887942
+Name:HASNA ALTHEA MEDALLO DELOS REYES
+Birthdate: 2000-02-23
+PositionID: 7d45d74e
+Contact Number: 09420388988
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account DELOS REYES,HASNA ALTHEA M. with ID_Number: 19887942 deleted | 27/01/2023 12:40:11
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:41:01
+ID Number: 19887942
+Name:HASNA ALTHEA MEDALLO DELOS REYES
+Birthdate: 2000-05-01
+PositionID: 7d45d74e
+Contact Number: 09331005558
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:49:41
+ID Number: 19924414
+Name:NATHANIEL CABUAL TIEMPO
+Birthdate: 2000-02-23
+PositionID: 462b4ec9
+Contact Number: 09223738269
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:56:30
+ID Number: 20220943
+Name:KYLA D BINONDO
+Birthdate: 2002-05-02
+PositionID: fe4d0272
+Contact Number: 09491848503
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:57:35
+ID Number: 21422456
+Name:CATHYRENE  A GIMENEZ
+Birthdate: 2003-06-03
+PositionID: bc343cdb
+Contact Number: 09667413990
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 12:58:31
+ID Number: 20227336
+Name:TRIXIA GLENN B VELEZ
+Birthdate: 2001-12-05
+PositionID: ec5ca665
+Contact Number: 09273662606
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 27/01/2023 14:48:07
+ID Number: 20231577
+Name:DAVE N RACAZA
+Birthdate: 2002-05-12
+PositionID: ec5ca665
+Contact Number: 09104757194
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 29/01/2023 13:50:48
+ID Number: 21312312
+Name:ALLAIN ZENITH NUNEZ SABANDAL
+Birthdate: 2001-03-13
+PositionID: 462b4ec9
+Contact Number: 09322551029
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account SABANDAL,ALLAIN ZENITH N. with ID_Number: 21312312 deleted | 29/01/2023 13:51:38
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 29/01/2023 13:52:03
+ID Number: 21313213
+Name:ALLAIN ZENITH NUNEZ TIEMPO
+Birthdate: 2023-01-17
+PositionID: 462b4ec9
+Contact Number: 09322551029
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account TIEMPO,ALLAIN ZENITH N. with ID_Number: 21313213 deleted | 29/01/2023 13:52:14
+----------------------------------------
+
+
+
+
+----------------------------------------
+New lakandiwa member added | 29/01/2023 13:53:46
+ID Number: 19924412
+Name:ALLAIN ZENITH NUNEZ SABANDAL
+Birthdate: 2023-01-17
+PositionID: 462b4ec9
+Contact Number: 09322551029
+----------------------------------------
+
+
+
+
+----------------------------------------
+Account SABANDAL,ALLAIN ZENITH N. with ID_Number: 19924412 deleted | 29/01/2023 13:53:59
+----------------------------------------
+
+

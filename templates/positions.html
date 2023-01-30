@@ -1,0 +1,244 @@
+{% extends 'base.html '%}
+
+{% block title %}
+{{title}}
+{% endblock %}
+{% block head%}
+<script src="{{url_for('static', filename='/js/positions.js')}}"></script>
+
+
+{% endblock %}
+
+{% block pagecontent %}
+
+  
+
+    <div class="modal fade" id="addpositionlevel" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-body p-0">
+            <div class="card card-plain">
+              <div class="card-header pb-0 text-left">
+                <h5 class="">Add Position Level</h5>
+                <p class="mb-0"></p>
+              </div>
+              <div class="card-body">
+                <form role="form text-left" method="POST" action="/addpositionlevel">
+                  <div class="input-group input-group-outline my-3">
+                    <label class="form-label">Position Level</label>
+                    <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="position_level" id="position_level">
+                  </div>
+         
+        
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">Add</button>
+                  </div>
+                </form>
+              </div>
+     
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-4">
+    <div class="modal fade" id="addposition" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-body p-0">
+            <div class="card card-plain">
+              <div class="card-header pb-0 text-left">
+                <h5 class="">Add Position Level</h5>
+                <p class="mb-0"></p>
+              </div>
+              <div class="card-body">
+                <form role="form text-left" method="POST" action="/addposition">
+
+                  <div class="input-group input-group-static mb-4">
+                    <label for="position_level_label" class="ms-0">Position Level</label>
+                    <select class="form-control" id="position_level_label" name="position_level">
+                      <option selected hidden  value="none">Select here</option>
+                      {% for pos_level in position_levels %}
+                      <option value="{{pos_level.position_level}}">{{pos_level.position_level}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="input-group input-group-outline my-3">
+                    <label class="form-label">Position</label>
+                    <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="position">
+                  </div>
+         
+                  
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">Add</button>
+                  </div>
+                </form>
+              </div>
+     
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-6">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Position Level</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                  
+                
+                    <th class="text-uppercase text-secondary text-l font-weight-bolder opacity-7">
+                        <p>Actions</p>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#addpositionlevel"><i class="fa-solid fa-plus"></i></a>
+                        <a  id="pl_delete"><i class="fa-sharp fa-solid fa-trash"></i></a>   
+
+                    </th>
+                    <th>
+
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <form action="/deletepositionlevel" method="POST">
+                    {%for position_level in position_levels | sort(attribute='position_level')%}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                  
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{position_level.position_level}}</h6>
+                          <p class="text-xs text-secondary mb-0"></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <input type="checkbox" name="position_level" value="{{position_level.position_level}}" class="pl_delete_checkbox" hidden >
+                    </td>               
+                  </tr>
+                  {% endfor %}
+                  <tr hidden id="pl_confirmdelete">
+                    <td>
+                      <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="pl_canceldelete">Cancel</button>
+                    </td>
+                    <td>
+                      <button type="submit" class="btn bg-gradient-danger btn-lg w-100">Delete Selected</button>
+                    </td>
+                  </tr>
+                </form>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Positions</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+        <thead>
+                  <tr>
+                  
+                
+                    <th class="text-uppercase text-secondary text-l font-weight-bolder opacity-7">
+                        <p>Actions</p>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#addposition"><i class="fa-solid fa-plus"></i></a>
+                        <a  id="p_delete"><i class="fa-sharp fa-solid fa-trash"></i></a>   
+
+                    </th>
+                    <th>
+
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <form action="/deleteposition" method="POST">
+                  {% for pos in positions | sort(attribute='position_level') %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                  
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{pos.position_level}} {{pos.position}}</h6>
+                          
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <input type="checkbox" name="position" value="{{pos.positionID}}" class="p_delete_checkbox"  hidden>
+                    </td>
+           
+                  </tr>
+                  {% endfor %}
+                  <tr  hidden id="p_confirmdelete">
+                    <td>
+                      <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="p_canceldelete">Cancel</button>
+                    </td>
+                    <td>
+                      <button type="submit" class="btn bg-gradient-danger btn-lg w-100">Delete Selected</button>
+                    </td>
+                  </tr>
+           
+               
+                </form>
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+  
+  {% if success is defined and success is not none %}
+  <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-solid fa-check"></i>
+    </span>
+    <span class="alert-text"><strong>Success!</strong> {{success}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endif %}
+  
+  {% if error is defined and error is not none%}
+  <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-sharp fa-solid fa-circle-exclamation"></i> 
+    </span>
+    <span class="alert-text"><strong>Error!</strong> {{error}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endif%}
+
+  
+{% endblock %}

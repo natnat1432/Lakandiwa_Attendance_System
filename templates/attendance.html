@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{title}}
+{% endblock  %}
+
+{% block head%}
+<script src="{{url_for('static', filename='js/attendance.js')}}"></script>
+{% endblock %}
+{% block pagecontent %}
+{% if page is defined and page is not none%}
+<input type="text" value="{{page}}" id="page" hidden>
+{% endif%}
+
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+              <h6 class="text-white ps-3">{{accountuser.firstname | title}}'s Attendance</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+                <div class="row justify-content-md-center w-100">
+                <form action="">
+                    <div class="d-flex ms-3 me-3 w-50">
+                    <div class="input-group input-group-static mb-4 w-20">
+                        <label for="exampleFormControlSelect1" class="ms-0">Sort</label>
+                        <select class="form-control" id="sort_form">
+                          {% if sort is defined%}
+                            {% if sort == 'asc' %}
+                            <option value="asc" selected>Ascending</option>
+                            {%else %}
+                            <option value="asc" >Ascending</option>
+                            {%endif%}
+
+                            {% if sort == 'desc' %}
+                            <option value="desc" selected>Descending</option>
+                            {%else %}
+                            <option value="desc" >Descending</option>
+                            {%endif%}
+                    
+                     
+                          {% endif %}
+                          {% if sort is not defined%}
+                          <option value="asc" >Ascending</option>
+                          <option value="desc" >Descending</option>
+                          {% endif %}
+
+           
+                          
+               
+                        </select>
+                      </div>
+                      
+                    <div class="input-group input-group-static mb-4 w-20 ms-3">
+                        <label for="exampleFormControlSelect1" class="ms-0">Filter</label>
+                        <select class="form-control" id="filter">
+                          
+                          {% if filter == 'all' %}
+                          <option value="all" selected>All</option>
+                          {% else %}
+                          <option value="all">All</option>
+                          {% endif %}
+
+                          {% if filter == 'today' %}
+                          <option value="today" selected>Today</option>
+                          {% else %}
+                          <option value="today">Today</option>
+                          {% endif %}
+
+                          {% if filter == 'thisweek' %}
+                          <option value="thisweek" selected>This Week</option>
+                          {% else %}
+                          <option value="thisweek">This Week</option>
+                          {% endif %}
+
+                          {% if filter == 'lastweek' %}
+                          <option value="lastweek" selected>Last Week</option>
+                          {% else %}
+                          <option value="lastweek">Last Week</option>
+                          {% endif %}
+                         
+                          {% if filter == 'day' %}
+                          <option value="day" selected>Day</option>
+                          {% else %}
+                          <option value="day">Day</option>
+                          {% endif %}
+
+                          {% if filter == 'month' %}
+                          <option value="month" selected>Month</option>
+                          {% else %}
+                          <option value="month">Month</option>
+                          {% endif %}
+                         
+                      
+                    
+                  
+              
+               
+                        </select>
+                      </div>
+                      {% if day is defined and day is not none %}
+                      <div class="input-group input-group-static mb-4 w-20 ms-3" id="day_input">
+                
+                        <label>Day</label>
+                        <input type="date" class="form-control" id="day_input_form" value="{{day}}" 
+                        {% if oldest is defined and oldest is not none%}
+                        min='{{oldest}}' max='{{current}}'
+                        {%else %}
+                        disabled
+                        {%endif%}
+                        >
+                  
+                  </div>
+                      {% else %}
+                      <div class="input-group input-group-static mb-4 w-20 ms-3" hidden id="day_input">
+                
+                        <label>Day</label>
+                        <input type="date" class="form-control" id="day_input_form" 
+                        {% if oldest is defined and oldest is not none%}
+                        min='{{oldest}}' max='{{current}}'
+                        {%else %}
+                        disabled
+                        {%endif%}
+                        >
+                  
+                  </div>
+                      {% endif %}
+
+
+                      {% if month is defined and month is not none %}
+                      <div class="input-group input-group-static mb-4 w-20 ms-3"  id="month_input">
+                
+                        <label>Month</label>
+                        <input type="month" class="form-control" id="month_input_form" value="{{month}}"
+                        {% if oldest is defined and oldest is not none%}
+                         min='{{oldest[:-3]}}' max='{{current[:-3]}}'
+                         {%else %}
+                         disabled
+                         {%endif%}
+                         >
+                  
+                  </div>
+                      {%else%}
+                      <div class="input-group input-group-static mb-4 w-20 ms-3" hidden id="month_input" >
+                
+                        <label>Month</label>
+                        <input type="month" class="form-control" id="month_input_form" 
+                        {% if oldest is defined and oldest is not none%}
+                        min='{{oldest[:-3]}}' max='{{current[:-3]}}'
+                        {%else %}
+                        disabled
+                        {% endif %}
+                        >
+                  
+                  </div>
+                      {%endif%}
+                
+                      </div>
+                </form>
+            </div>
+              <table class="table align-items-center mb-0">
+                <thead>
+            
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time In</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Countersigned By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Work Done</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Out</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Countersigned By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Rendered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                  {% for total in total_attendance %}
+                  <tr>
+                    
+                    <td class="align-middle text-center">
+                      <p class="text-xs font-weight-bold mb-0">{{total.time_in.strftime('%I:%M %p')}}</p>
+                      <p class="text-xs text-secondary mb-0">{{total.time_in.strftime('%B %d, %Y')}}</p>
+                    </td>
+
+                    <td class="align-middle text-center">
+                      {% for each in members%}
+                        {% if total.countersign_time_in == each.id_number%}
+                      <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                         {% for position in positions %}
+                            {% if each.positionID == position.positionID %}
+                      <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                             {% endif %}
+                         {% endfor %}
+                      {% endif %}
+                      {% endfor %}
+
+                      {% if total.countersign_time_in is none %}
+                      <p class="text-xs font-weight-bold mb-0">
+                        <span class="badge bg-gradient-danger">No countersign</span>
+                      </p>
+                      {% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                      {% for each in members%}
+                        {% if each.id_number == total.signature_time_in%}
+                      <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                      {% for position in positions %}
+                        {% if position.positionID == each.positionID %}
+                      <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                      {% endif %}
+                      {% endfor %}
+                      {% endif %}
+                      {% endfor %}
+
+                      {% if total.signature_time_in is none %}
+                      <p class="text-xs font-weight-bold mb-0">
+                        <span class="badge bg-gradient-danger">No sign yet</span>
+                      </p>
+                      {% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                      {% if total.work_done is not none%}
+                      <span class="text-secondary text-xs font-weight-bold">{{total.work_done}}</span>
+                      {% else %}
+                      <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No work done yet</span></span>
+                      
+                      {% endif %}
+                    </td>
+       
+                    <td class="align-middle text-center">
+                      {% if total.time_out is not none %}
+                      <p class="text-xs font-weight-bold mb-0">{{total.time_out.strftime('%I:%M %p')}}</p>
+                      <p class="text-xs text-secondary mb-0">{{total.time_out.strftime('%B %d, %Y')}}</p>
+                      {% else %}
+                      <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No time out yet</span></span>
+                      {% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                      {% for each in members%}
+                        {% if each.id_number == total.countersign_time_out%}
+                      <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                      {% for position in positions %}
+                        {% if position.positionID == each.positionID %}
+                      <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                      {% endif %}
+                      {% endfor %}
+        
+                      {% endif %}
+                      {% endfor %}
+
+                      {% if total.countersign_time_out is none %}
+                      <p class="text-xs font-weight-bold mb-0">
+                        <span class="badge bg-gradient-danger">No countersign</span>
+                      </p>
+                      {% endif %}
+                    </td>
+                    <td class="align-middle text-center">
+                      {% for each in members%}
+                        {% if each.id_number == total.signature_time_out%}
+                      <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                      {% for position in positions %}
+                        {% if position.positionID == each.positionID %}
+                      <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                      {% endif %}
+                      {% endfor %}
+                  
+                      {% endif %}
+                      {% endfor %}
+
+                      {% if total.signature_time_out is none %}
+                      <p class="text-xs font-weight-bold mb-0">
+                        <span class="badge bg-gradient-danger">No sign yet</span>
+                      </p>
+                      {% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+
+                      {% if total.time_rendered is not none %}
+                      <span class="text-secondary text-xs font-weight-bold">{{total.time_rendered}}</span>
+                      {% else %}
+                      <span class="text-secondary text-xs font-weight-bold">
+                        <span class="badge bg-gradient-danger">Incomplete</span>
+                      </span>
+                      {% endif %}
+                    </td>
+                    
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+
+  </div>
+
+
+  <nav aria-label="Page navigation example">
+    <p class="text-center">Display: {{paginated_consumption.start}} - {{paginated_consumption.end}} | {{count_attendance.total}} Results </p><br>
+    <ul class="pagination justify-content-center">
+      {% if page == '1' %}
+      {%else%}
+      <li class="page-item">
+        <button class="page-link" onclick="previousPage()" tabindex="-1">
+          <span class="material-icons">
+            keyboard_arrow_left
+          </span>
+          <span class="sr-only">Previous</span>
+        </button>
+      </li>
+      {%endif%}
+      {% if page | int == total_page | int and page | int <= total_page | int %}
+   
+      {% else %}
+      <li class="page-item">
+        <button class="page-link" onclick="nextPage()">
+          <span class="material-icons">
+            keyboard_arrow_right
+          </span>
+          <span class="sr-only">Next</span>
+        </button>
+      </li>
+      {% endif %}
+    
+     
+  
+    </ul>
+  </nav>
+{% endblock %}

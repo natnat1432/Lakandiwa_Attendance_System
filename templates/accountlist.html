@@ -1,0 +1,305 @@
+{% extends 'base.html '%}
+
+{% block title %}
+{{title}}
+{% endblock %}
+{% block head%}
+<script src="{{url_for('static', filename='/js/accountlist.js')}}"></script>
+
+{% endblock %}
+
+{% block pagecontent%}
+<div class="col-md-4">
+  <div class="modal fade" id="addmember" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-form" role="document">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <div class="card card-plain">
+            <div class="card-header pb-0 text-left">
+              <h5 class="">Add Member</h5>
+              <p class="mb-0"></p>
+            </div>
+            <div class="card-body">
+              <form role="form text-left" method="POST" action="/addmember">
+
+                <!-- <div class="input-group input-group-static mb-4">
+                  <label for="position_level_label" class="ms-0">Position Level</label>
+                  <select class="form-control" id="position_level_label" name="position_level">
+                    <option selected hidden  value="none">Select here</option>
+            
+                  </select>
+                </div> -->
+
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">ID Number</label>
+                  <input type="number" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="id_number" id="id_number" onKeyPress="if(this.value.length==8) return false;">
+                </div>
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">Firstname</label>
+                  <input type="text" class="form-control caps" onfocus="focused(this)" onfocusout="defocused(this)" name="firstname">
+                </div>
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">Middlename</label>
+                  <input type="text"  class="form-control caps" onfocus="focused(this)" onfocusout="defocused(this)" name="middlename">
+                </div>
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">Lastname</label>
+                  <input type="text" class="form-control caps" onfocus="focused(this)" onfocusout="defocused(this)" name="lastname">
+                </div>
+                <div class="input-group input-group-static my-3">
+                  <label>Birthdate</label>
+                  <input type="date" class="form-control" name="birthdate">
+                </div>
+      
+
+                <div class="input-group input-group-static mb-4">
+                  <label for="position_level_label" class="ms-0">Position</label>
+                  <select class="form-control" id="position" name="position">
+                    <option selected hidden  value="none">Select here</option>
+                    {% for pos in positions %}
+               
+                        <option value="{{pos.positionID}}">{{pos.position_level}} {{pos.position}}</option>
+                  
+                    
+                    {% endfor %}
+                  </select>
+                </div>
+
+
+                <div class="input-group input-group-dynamic mb-4">
+                  <input type="number" class="form-control" placeholder="Contact Number" aria-label="Contact Number" aria-describedby="basic-addon2" id="contact_number" name="contact_number">
+                  <span class="input-group-text" id="basic-addon2">09xxxxxxxxx</span>
+                </div>
+                
+       
+                
+                <div class="text-center">
+                  <button type="submit" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">Add</button>
+                </div>
+              </form>
+            </div>
+   
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="col-md-4">
+  <div class="modal fade" id="viewmember" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-form" role="document">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <div class="card card-plain">
+            <div class="card-header pb-0 text-left">
+              <h5 class="">View Member</h5>
+              <p class="mb-0"></p>
+            </div>
+            <div class="card-body">
+              <form role="form text-left" method="POST" action="">
+
+                <!-- <div class="input-group input-group-static mb-4">
+                  <label for="position_level_label" class="ms-0">Position Level</label>
+                  <select class="form-control" id="position_level_label" name="position_level">
+                    <option selected hidden  value="none">Select here</option>
+            
+                  </select>
+                </div> -->
+                <div class="d-flex px-2 py-1">
+                  
+                  <div class="d-flex px-2 py-2">
+                    <div>
+                      <center><img src="" class="avatar avatar-sm me-3 border-radius-xl text-end" alt="user1" id="view_image"></center>
+                    </div>
+             
+                  
+       
+                </div>
+                <h5 style="margin:3%;"><span id="view_lastname"></span>, <span id="view_firstname"></span> <span id="view_middlename"></span></h5>
+              </div>
+              
+                <div class="input-group input-group-static mb-4">
+                  <label>ID Number</label>
+                  <input type="number" class="form-control"  name="id_number" id="view_id_number" readonly>
+                </div>
+               
+                <div class="input-group input-group-static my-3">
+                  <label>Birthdate</label>
+                  <input type="date" class="form-control" name="birthdate" id="view_birthdate" readonly>
+                </div>
+
+                <div class="input-group input-group-static my-3">
+                  <label>Position</label>
+                  <input type="text" class="form-control" name="position" id="view_position" readonly>
+                </div>
+
+                <div class="input-group input-group-static my-3">
+                  <label>Contact Number</label>
+                  <input type="text" class="form-control" name="contact_number" id="view_contact_number" readonly>
+                </div>
+
+           
+
+
+         
+                
+       
+                
+      
+              </form>
+            </div>
+   
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-13">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">
+                Account List
+              </h6>
+           
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th colspan="2"></th>
+                    <th>
+                      <div class="flexer">
+                      <a  class="mb-0 text-l" data-bs-toggle="modal" data-bs-target="#addmember"><i class="fa-solid fa-plus"></i></a>
+                      <span style="margin-left:5px; margin-right:5px;"></span>
+                      <a  class="mb-0 text-l" id="account_delete"><i class="fa-sharp fa-solid fa-trash"></i></a>
+                    </div>
+                    </th>
+                  </tr>
+                  <tr>
+                  
+                
+                    <!-- <th class="text-uppercase text-secondary text-l font-weight-bolder opacity-7">
+                        <p>Actions</p>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#addpositionlevel"><i class="fa-solid fa-plus"></i></a>
+                        <a  id="pl_delete"><i class="fa-sharp fa-solid fa-trash"></i></a>   
+
+                    </th> -->
+             
+                    <th class="text-capitalize text-secondary text-l font-weight-bolder opacity-7">
+                       Name
+                    </th> 
+                    <th class="text-capitalize text-secondary text-l font-weight-bolder opacity-7">
+                       Position
+                    </th> 
+                    <th class="text-capitalize text-secondary text-l font-weight-bolder opacity-7">
+                      Actions
+                    </th> 
+
+                    <th ></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <form action="/deleteaccount" method="POST">
+                  {% for account in accounts%}
+                  <tr>
+               
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                  
+                          <div class="d-flex px-2 py-2">
+                            <div>
+                              <center><img src="{{url_for('static', filename='members/{}/{}'.format(account.id_number,account.dp_filename))}}" class="avatar avatar-sm me-3 border-radius-xl text-end" alt="user1"></center>
+                            </div>
+                      
+                          <h6 class="mb-0 text-sm" style="margin:5%;"> {{account.lastname}}, {{account.firstname}} {{account.middlename |first}}.</h6>
+               
+                        </div>
+                      </div>
+                    </td>
+        
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                  
+                        <div class="d-flex flex-column justify-content-center">
+                          {% for pos in positions%}
+                          {% if pos.positionID == account.positionID%}
+                          <h6 class="mb-0 text-sm">{{pos.position}}</h6>
+                          <p class="text-xs text-secondary mb-0"> {{pos.position_level}}</p>
+                          {% endif %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                  
+                        <div class="d-flex flex-column justify-content-center">
+                 
+                          <a href="" data-bs-toggle="modal" data-bs-target="#viewmember" onclick="setViewModal('{{account.id_number}}', '{{account.firstname}}', '{{account.middlename}}','{{account.lastname}}','{{account.birthdate}}',{% for pos in positions%}{% if pos.positionID == account.positionID%}'{{pos.position_level}} {{pos.position}}'{% endif %}
+                          {% endfor %}, '{{account.contact_number}}', '{{account.dp_filename}}')" ><i class="fa-solid fa-eye"></i></a>
+           
+                        </div>
+                      </div>
+                    </td>
+                     <td>
+                      <input type="checkbox" name="accounts" value="{{account.id_number}}" class="account_delete_checkbox" hidden>
+                     </td>
+                  </tr>
+                  {% endfor %}
+                  <tr  hidden  id="account_confirmdelete">
+                    
+                    <td>
+                      <p>Confirm delete?</p>
+                      <button type="button" class="btn btn-outline-secondary btn-l w-50" id="account_canceldelete">Cancel</button>
+                      <button type="submit" class="btn bg-gradient-danger btn-l w-50">Delete Selected</button>
+                    </td>
+         
+                  </tr>
+                </form>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+  </div>
+  {% if success is defined and success is not none %}
+  <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-solid fa-check"></i>
+    </span>
+    <span class="alert-text"><strong>Success!</strong> {{success}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endif %}
+  
+  {% if error is defined and error is not none%}
+  <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-sharp fa-solid fa-circle-exclamation"></i>
+    </span>
+    <span class="alert-text"><strong>Error!</strong> {{error}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endif%}
+
+
+{% endblock %}

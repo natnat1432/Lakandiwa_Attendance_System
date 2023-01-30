@@ -1,0 +1,285 @@
+{% extends 'base.html'%}
+{% block title %}
+{{title}}
+{% endblock %}
+
+{% block pagecontent %}
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-secondary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Time In Stamps</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Member</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time In Stamp</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Countersign By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+         
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for uti in unsigned_time_in%}
+                    {% if uti.id_number != accountuser.id_number %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        {% for each in members %}
+                        {% if each.id_number == uti.id_number %}
+                        <div>
+                          <img src="{{url_for('static', filename='members/{}/{}'.format(each.id_number, each.dp_filename))}}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            
+                          <h6 class="mb-0 text-sm">{{each.lastname}}, {{each.firstname}} {{each.middlename | first}}.</h6>
+                          {% for pos in positions%}
+                          {% if pos.positionID == each.positionID %}
+                          <p class="text-xs text-secondary mb-0">{{pos.position_level}} {{pos.position}}</p>
+                          {% endif %}
+                          {% endfor %}
+                        {% endif%}
+                          
+                      
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="align-middle text-center">
+
+                        <span class="text-secondary text-xs font-weight-bold">{{uti.time_in.strftime('%I:%M %p | %B %d, %Y')}}</span>
+
+                      
+                      </td>
+                      <td class="align-middle text-center">
+                        {% for each in members%}
+                          {% if each.id_number == uti.countersign_time_in%}
+                        <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                        {% for position in positions %}
+                          {% if position.positionID == each.positionID %}
+                        <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                        {% endif %}
+                        {% endfor %}
+          
+                        {% endif %}
+                        {% endfor %}
+  
+                        {% if uti.countersign_time_in is none %}
+                        <p class="text-xs font-weight-bold mb-0">
+                          <span class="badge bg-gradient-danger">No countersign</span>
+                        </p>
+                        {% endif %}
+                      </td>
+                    <td class="align-middle text-center text-sm">
+
+                      {% for pos in positions %}
+               
+                          {% if uti.countersign_time_in is none and pos.positionID == accountuser.positionID and pos.position_level == 'Senior Staff' or pos.position_level == 'Junior Staff' and uti.id_number != accountuser.id_number %}
+                        <a type="button" class="btn btn-outline-warning" href="{{url_for('countersign', type='in', attendanceID=uti.attendanceID, id_number = accountuser.id_number)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Countersign</span>
+                        </a>
+                
+                        {% endif %}
+                        {% if uti.countersign_time_in is not none and pos.positionID == accountuser.positionID and pos.position_level == 'Senior Staff' or pos.position_level == 'Junior Staff' and uti.id_number != accountuser.id_number%}
+                        <a type="button" class="btn btn-outline-secondary" readonly disabled>
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Countersigned</span>
+                      </a>
+                  
+                        {% endif %}
+
+                      {% if uti.signature_time_in is none and pos.positionID == accountuser.positionID and pos.position_level == 'Editorial Board' and uti.id_number != accountuser.id_number%}
+                      <a type="button" class="btn btn-outline-success" href="{{url_for('sign', type='in', attendanceID=uti.attendanceID, id_number = accountuser.id_number)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Sign</span>
+                      </a>
+
+                      <a type="button" class="btn btn-outline-secondary" href="{{url_for('rejectsign', type='in',attendanceID=uti.attendanceID)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">close</i></span>
+                    
+                      </a>
+                      {%endif%}
+                      {% endfor %}
+                    </td>
+                  
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+          
+               
+             
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+
+  </div>
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-secondary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Time Out Stamps</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Member</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Out Stamp</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Work Done</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Countersign By</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+         
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    {% for uto in unsigned_time_out%}
+                    {% if uto.id_number != accountuser.id_number %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        {% for each in members %}
+                        {% if each.id_number == uto.id_number %}
+                        <div>
+                          <img src="{{url_for('static', filename='members/{}/{}'.format(each.id_number, each.dp_filename))}}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            
+                          <h6 class="mb-0 text-sm">{{each.lastname}}, {{each.firstname}} {{each.middlename | first}}.</h6>
+                          {% for pos in positions%}
+                          {% if pos.positionID == each.positionID %}
+                          <p class="text-xs text-secondary mb-0">{{pos.position_level}} {{pos.position}}</p>
+                          {% endif %}
+                          {% endfor %}
+                        {% endif%}
+                          
+                      
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        {% if uto.time_out is not none %}
+                        <span class="text-secondary text-xs font-weight-bold">{{uto.time_out.strftime('%I:%M %p | %B %d, %Y')}}</span>
+                        {% endif %}
+                      
+                      </td>
+                    <td class="align-middle text-center">
+
+                        <span class="text-secondary text-xs font-weight-bold">{{uto.work_done}}</span>
+
+                      
+                      </td>
+                      <td class="align-middle text-center">
+                        {% for each in members%}
+                          {% if each.id_number == uto.countersign_time_out%}
+                        <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename | first}}.</p>
+                        {% for position in positions %}
+                          {% if position.positionID == each.positionID %}
+                        <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                        {% endif %}
+                        {% endfor %}
+          
+                        {% endif %}
+                        {% endfor %}
+  
+                        {% if uto.countersign_time_out is none %}
+                        <p class="text-xs font-weight-bold mb-0">
+                          <span class="badge bg-gradient-danger">No countersign</span>
+                        </p>
+                        {% endif %}
+                      </td>
+                    <td class="align-middle text-center text-sm">
+
+                      {% for pos in positions %}
+               
+                          {% if uto.countersign_time_out is none and pos.positionID == accountuser.positionID and pos.position_level == 'Senior Staff' or pos.position_level == 'Junior Staff' and uto.id_number != accountuser.id_number %}
+                        <a type="button" class="btn btn-outline-warning" href="{{url_for('countersign', type='out', attendanceID=uto.attendanceID, id_number = accountuser.id_number)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Countersign</span>
+                        </a>
+                
+                        {% endif %}
+                        {% if uto.countersign_time_out is not none and pos.positionID == accountuser.positionID and pos.position_level == 'Senior Staff' or pos.position_level == 'Junior Staff' and uto.id_number != accountuser.id_number%}
+                        <a type="button" class="btn btn-outline-secondary" readonly disabled>
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Countersigned</span>
+                      </a>
+                  
+                        {% endif %}
+
+                      {% if uto.signature_time_out is none and pos.positionID == accountuser.positionID and pos.position_level == 'Editorial Board' and uto.id_number != accountuser.id_number%}
+                      <a type="button" class="btn btn-outline-success" href="{{url_for('sign', type='out', attendanceID=uto.attendanceID, id_number = accountuser.id_number)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">border_color</i></span>
+                        <span class="btn-inner--text">Sign</span>
+                      </a>
+
+                      <a type="button" class="btn btn-outline-secondary" href="{{url_for('rejectsign', type='out',attendanceID=uto.attendanceID)}}">
+                        <span class="btn-inner--icon"><i class="material-icons">close</i></span>
+                    
+                      </a>
+                      {%endif%}
+                      {% endfor %}
+                    </td>
+                  
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+          
+               
+             
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+
+  </div>
+
+
+  {% if success is defined and success is not none %}
+  <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-solid fa-check"></i>
+    </span>
+    <span class="alert-text"><strong>Success!</strong> {{success}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endif %}
+  
+  {% if error is defined and error is not none%}
+  <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
+    <span class="alert-icon align-middle">
+      <i class="fa-sharp fa-solid fa-circle-exclamation"></i>
+    </span>
+    <span class="alert-text"><strong>Error!</strong> {{error}}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endif%}
+
+
+{% endblock %}
