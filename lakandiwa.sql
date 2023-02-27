@@ -1,32 +1,27 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
+-- MariaDB dump 10.19  Distrib 10.4.27-MariaDB, for Win64 (AMD64)
 --
--- Host: 127.0.0.1
--- Generation Time: Jan 27, 2023 at 11:45 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: lakandiwa
+-- ------------------------------------------------------
+-- Server version	10.4.27-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `lakandiwa`
---
-
--- --------------------------------------------------------
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `attendance`
 --
 
+DROP TABLE IF EXISTS `attendance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `attendance` (
   `attendanceID` varchar(50) NOT NULL,
   `id_number` int(8) NOT NULL,
@@ -37,41 +32,38 @@ CREATE TABLE `attendance` (
   `countersign_time_out` int(8) DEFAULT NULL,
   `signature_time_out` int(8) DEFAULT NULL,
   `work_done` varchar(255) DEFAULT NULL,
-  `time_rendered` time DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `time_rendered` time DEFAULT NULL,
+  PRIMARY KEY (`attendanceID`),
+  KEY `id_number` (`id_number`),
+  KEY `signature_time_in` (`signature_time_in`),
+  KEY `signature_time_out` (`signature_time_out`),
+  KEY `countersign_time_in` (`countersign_time_in`),
+  KEY `countersign_time_out` (`countersign_time_out`),
+  CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`id_number`) REFERENCES `member` (`id_number`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`signature_time_in`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`signature_time_out`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `attendance_ibfk_4` FOREIGN KEY (`countersign_time_in`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `attendance_ibfk_5` FOREIGN KEY (`countersign_time_out`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `attendance`
 --
 
-INSERT INTO `attendance` (`attendanceID`, `id_number`, `time_in`, `countersign_time_in`, `signature_time_in`, `time_out`, `countersign_time_out`, `signature_time_out`, `work_done`, `time_rendered`) VALUES
-('36cb0a7c', 20227336, '2023-01-27 22:24:17', NULL, 19924414, '2023-01-27 22:24:26', NULL, 19924414, 'asdasd', '00:00:09'),
-('3fb43cc3', 20227336, '2023-01-27 22:28:52', NULL, 19924414, '2023-01-27 22:29:05', NULL, 19924414, 'sadasds', '00:00:13'),
-('49b32323', 20227336, '2023-01-27 18:11:52', 20231577, 19924414, '2023-01-27 18:16:04', NULL, 19924414, 'Making BB', '00:04:12'),
-('4da1ad6e', 20227336, '2023-01-27 22:27:02', NULL, 19924414, '2023-01-27 22:27:12', NULL, 19924414, 'sdsadasd', '00:00:10'),
-('567404d0', 20227336, '2023-01-27 22:26:42', NULL, 19924414, '2023-01-27 22:26:55', NULL, 19924414, 'asdasd', '00:00:13'),
-('642a8b5a', 20227336, '2023-01-27 22:28:02', NULL, 19924414, '2023-01-27 22:28:12', NULL, 19924414, 'asdasd', '00:00:10'),
-('7677ecbf', 20227336, '2023-01-27 22:28:31', NULL, 19924414, '2023-01-27 22:28:39', NULL, 19924414, 'asdasd', '00:00:08'),
-('787eb8af', 20227336, '2023-01-27 22:30:47', NULL, 19924414, '2023-01-27 22:30:57', NULL, 19924414, 'adxsad', '00:00:10'),
-('88bcf9d6', 20227336, '2023-01-27 22:22:37', NULL, 19924414, '2023-01-27 22:23:29', NULL, 19924414, 'sasaa', '00:00:52'),
-('a6667ae1', 20227336, '2023-01-27 22:24:46', NULL, 19924414, '2023-01-27 22:24:53', NULL, 19924414, 'dasc', '00:00:07'),
-('a67a8de8', 20227336, '2023-01-27 22:25:10', NULL, 19924414, '2023-01-27 22:25:20', NULL, 19924414, 'asdasd', '00:00:10'),
-('b5419bb0', 20227336, '2023-01-27 22:25:48', NULL, 19924414, '2023-01-27 22:25:56', NULL, 19924414, 'asdsd', '00:00:08'),
-('ba108dd5', 20227336, '2023-01-27 22:25:32', NULL, 19924414, '2023-01-27 22:25:41', NULL, 19924414, 'adsadas', '00:00:09'),
-('c68e51d8', 20227336, '2023-01-27 22:30:31', NULL, 19924414, '2023-01-27 22:30:39', NULL, 19924414, 'asds', '00:00:08'),
-('cb2da4bb', 20227336, '2023-01-27 22:30:14', NULL, 19924414, '2023-01-27 22:30:23', NULL, 19924414, 'sdasd', '00:00:09'),
-('d16c1bb8', 20227336, '2023-01-27 15:49:34', NULL, 19924414, '2023-01-27 16:39:14', 20231577, 19924414, 'Making BB', '00:49:40'),
-('edc2bea9', 20227336, '2023-01-27 22:26:11', NULL, 19924414, '2023-01-27 22:26:29', NULL, 19924414, 'asdasd', '00:00:18'),
-('edcd7a90', 20227336, '2023-01-27 22:23:40', NULL, 19924414, '2023-01-27 22:23:49', NULL, 19924414, 'sdasdas', '00:00:09'),
-('f42b2879', 20227336, '2023-01-27 18:19:07', NULL, 19924414, '2023-01-27 18:20:40', NULL, 19924414, 'Writing', '00:01:33'),
-('fd3078d6', 20227336, '2023-01-27 22:23:59', NULL, 19924414, '2023-01-27 22:24:10', NULL, 19924414, 'sdadsad', '00:00:11');
-
--- --------------------------------------------------------
+LOCK TABLES `attendance` WRITE;
+/*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
+INSERT INTO `attendance` VALUES ('03e9c1f3',20233755,'2023-02-01 09:46:20',NULL,19887942,'2023-02-01 10:30:40',NULL,19887942,'study','00:44:20'),('057815f8',21422456,'2023-02-01 11:05:02',19888593,19887942,'2023-02-01 11:35:38',NULL,19887942,'Studying','00:30:36'),('0c34108f',20220943,'2023-02-03 14:14:48',NULL,19887942,'2023-02-03 20:48:02',NULL,19887942,'bought office supplies, pictorial','06:33:14'),('0ee8d38f',20287140,'2023-02-03 14:16:02',NULL,19887942,'2023-02-03 20:46:13',NULL,19887942,'Cover in T. Padilla and Edit Photos','06:30:11'),('0f9fb941',19930841,'2023-02-03 14:15:16',NULL,19887942,'2023-02-03 20:23:11',NULL,19887942,'Cover in T.Padilla and Edit Photos','06:07:55'),('15ab0a69',19930841,'2023-02-02 16:46:15',20233755,19887942,'2023-02-02 17:23:43',NULL,19887942,'duty','00:37:28'),('15e511c8',19888593,'2023-02-02 20:38:07',NULL,20220943,'2023-02-02 21:21:52',NULL,20220943,'chika','00:43:45'),('18c742b3',19886076,'2023-02-03 14:13:03',NULL,19887942,'2023-02-03 18:56:32',NULL,21422456,'Approve BB photos','04:43:29'),('1c8429e8',19837277,'2023-02-02 14:14:11',NULL,20220935,'2023-02-02 14:27:11',19930841,21422456,'Chill','00:13:00'),('1e7d60f0',19887942,'2023-02-02 09:42:28',20233755,20220935,'2023-02-02 18:26:38',NULL,20220935,'Admin, Edits','08:44:10'),('209211a8',21422456,'2023-02-03 14:13:23',NULL,19887942,'2023-02-03 19:08:46',NULL,19887942,'Regular Meeting; Water Collection','04:55:23'),('284bd4a5',19837277,'2023-02-06 10:41:21',21427224,20220935,'2023-02-06 14:29:30',NULL,NULL,'Stay in the booth',NULL),('2e273b0c',20233755,'2023-01-31 13:48:12',NULL,19887942,'2023-01-31 15:16:17',NULL,21422456,'making bb output','01:28:05'),('2ebf928f',19930841,'2023-02-01 11:25:17',19888593,21422456,'2023-02-01 13:54:31',NULL,19887942,'photowalk','02:29:14'),('2ef5194d',20231577,'2023-02-01 15:42:09',NULL,19887942,'2023-02-01 17:41:28',NULL,20220943,'Studying','01:59:19'),('31b62cbb',20231577,'2023-02-02 14:42:47',NULL,21422456,'2023-02-02 21:00:16',NULL,20220935,'studying','06:17:29'),('3587d20f',21436266,'2023-01-31 15:33:52',NULL,20220935,'2023-01-31 19:24:25',20227955,20220943,'Beat Gathering','03:50:33'),('380f1f82',18740779,'2023-01-31 11:47:35',19888593,19887934,'2023-01-31 17:13:05',NULL,21422456,'WedPol','05:25:30'),('386f8034',20227955,'2023-02-02 19:40:22',NULL,20220935,'2023-02-02 21:15:53',NULL,20220935,'Reading','01:35:31'),('389d5419',19930841,'2023-01-31 16:47:31',5870324,21422456,'2023-01-31 18:38:47',21436266,20220943,'Studying','01:51:16'),('39743508',19887942,'2023-02-06 10:39:26',19837277,20220935,NULL,NULL,NULL,NULL,NULL),('3e9bf11e',21436480,'2023-02-03 09:43:17',NULL,19924414,'2023-02-03 14:17:00',NULL,20220943,'meeting, partial social media layout','04:33:43'),('429d5dd8',20220943,'2023-01-31 20:34:36',NULL,20220935,'2023-02-01 17:38:47',NULL,19887942,'Property Custodian','21:04:11'),('43d2b340',19888593,'2023-02-01 13:37:06',NULL,21422456,'2023-02-01 18:38:28',NULL,19924414,'Study','05:01:22'),('45b87833',19930841,'2023-02-02 10:33:31',NULL,20220935,'2023-02-02 15:20:47',19837277,19886076,'chill','04:47:16'),('46668163',20227336,'2023-01-30 17:41:10',NULL,21422456,'2023-02-01 17:40:50',NULL,20220943,'BULLETIN, TALKING, SLEEPING','00:00:01'),('4c6ae129',21427224,'2023-02-02 10:24:44',NULL,20220935,'2023-02-02 11:46:08',NULL,19887942,'Studying','01:21:24'),('4f66578e',19930841,'2023-02-01 15:13:00',NULL,19887942,'2023-02-01 17:33:54',NULL,20220943,'photowalk','02:20:54'),('543b7efe',20231577,'2023-01-31 19:08:01',19888593,20220935,'2023-01-31 20:52:57',20227955,20220943,'Studying','01:44:56'),('57930e61',5870324,'2023-01-31 10:10:45',20287140,20220935,'2023-01-31 14:27:11',NULL,21422456,'Swept the floor','04:16:26'),('5880cb31',20231577,'2023-02-01 17:44:20',NULL,19887942,'2023-02-01 18:30:32',NULL,19924414,'Wed pol caption','00:46:12'),('5a075a56',20287140,'2023-02-02 14:21:18',NULL,19887942,'2023-02-02 15:29:36',19837277,21422456,'contacting trainees and Print Tarp','01:08:18'),('5ebbdf19',20227955,'2023-01-31 10:27:50',19930841,20220935,'2023-01-31 13:45:47',NULL,20220935,'WedPol','03:17:57'),('63b8c476',21422456,'2023-02-06 13:34:44',NULL,NULL,NULL,NULL,NULL,NULL,NULL),('66cc785d',21436266,'2023-02-02 15:38:28',NULL,19886076,'2023-02-02 19:02:59',20227336,20220935,'BB','03:24:31'),('66e37fa2',20220935,'2023-02-06 12:17:13',21436480,21422456,'2023-02-06 14:26:26',NULL,NULL,'sleeping',NULL),('67b7bd8b',20220943,'2023-02-02 20:39:12',NULL,20220935,'2023-02-02 21:40:04',NULL,20220935,'Duty','01:00:52'),('68d7d6db',19887942,'2023-01-31 12:28:36',NULL,20220935,'2023-01-31 18:22:20',NULL,20220935,'Letters, Printer','05:53:44'),('6a949749',20287140,'2023-02-01 15:57:02',19837277,19886076,'2023-02-01 17:39:40',NULL,20220943,'photowalk','01:42:38'),('6bbc6007',20233755,'2023-02-03 14:20:37',22702344,19887942,'2023-02-04 12:39:42',19837277,19924414,'bb make','22:19:05'),('6f74696c',22702344,'2023-02-04 12:02:14',19837277,19887942,'2023-02-06 12:19:36',21436480,NULL,'General cleaning',NULL),('6f964ca5',19887942,'2023-02-03 14:14:13',NULL,20220943,'2023-02-03 20:50:16',NULL,20220943,'Sir Crisanto, Org Chart, IMS, Receipts, Envelopes','06:36:03'),('703f62aa',20227955,'2023-02-03 14:17:42',NULL,20220943,'2023-02-03 15:44:36',NULL,20220943,'Talk w/ Sir Crisanto','01:26:54'),('709414df',22702344,'2023-02-02 13:27:38',NULL,20220935,'2023-02-02 18:04:36',NULL,19887942,'work on BB','04:36:58'),('70e88f70',20220935,'2023-02-01 12:14:56',19888593,21422456,'2023-02-01 14:19:50',NULL,19887942,'answered as','02:04:54'),('731394a3',20227955,'2023-02-06 07:56:56',19837277,19887942,NULL,NULL,NULL,NULL,NULL),('737a5437',21436480,'2023-02-02 15:11:41',19837277,21422456,'2023-02-02 17:12:07',19837277,20220935,'Partial BB Design','02:00:26'),('7505b3ee',20233755,'2023-02-02 15:37:39',NULL,19886076,'2023-02-02 17:05:29',19837277,20220935,'BB MAKING','01:27:50'),('76012b9f',22702344,'2023-02-01 10:23:11',NULL,19887942,'2023-02-01 12:05:31',NULL,19887934,'watched movie','01:42:20'),('78327e9b',19378843,'2023-02-06 13:31:35',NULL,21422456,NULL,NULL,NULL,NULL,NULL),('7e869c23',20231577,'2023-02-06 13:54:23',NULL,21422456,'2023-02-06 14:25:46',NULL,NULL,'Studying',NULL),('7f8646d2',20287140,'2023-01-31 13:37:12',NULL,20220935,'2023-01-31 17:54:52',19930841,19887942,'WedPol','04:17:40'),('8810db8a',21436480,'2023-02-01 11:30:16',NULL,21422456,'2023-02-01 14:29:31',NULL,19887942,'BB Materials, partial design of BB','02:59:15'),('8cd14586',20220935,'2023-01-31 10:54:51',5870324,19887934,'2023-01-31 12:30:18',NULL,21422456,'Studying','01:35:27'),('8d833f27',20227955,'2023-01-31 19:47:31',NULL,20220935,'2023-01-31 21:36:17',NULL,20220943,'WedPol/Editing','01:48:46'),('922b7cc8',22702344,'2023-01-31 13:33:04',20287140,20220935,'2023-01-31 16:47:06',NULL,21422456,'Studying','03:14:02'),('95fe71ea',20287140,'2023-02-04 12:41:37',19837277,19887942,'2023-02-06 12:16:25',NULL,20220935,'General Cleaning','00:00:01'),('9782478d',20220935,'2023-02-02 14:14:31',NULL,19887942,'2023-02-02 18:25:19',NULL,19887942,'studying','04:10:48'),('9c04e791',20231577,'2023-02-02 12:38:33',NULL,19887942,'2023-02-02 13:33:40',NULL,20220935,'Studying','00:55:07'),('a0181f73',21436480,'2023-01-31 14:28:20',NULL,21422456,'2023-01-31 15:37:08',5870324,20220935,'BB Cleanup','01:08:48'),('a3413d2f',21422456,'2023-02-02 14:47:27',19837277,19886076,'2023-02-02 16:37:58',NULL,19887942,'Water payment','01:50:31'),('a482363e',19837277,'2023-02-01 11:58:13',NULL,19887942,'2023-02-01 15:58:02',22702344,20220943,'Photo walk','03:59:49'),('a56505a8',22702344,'2023-02-01 15:16:25',19930841,19886076,'2023-02-01 16:47:33',NULL,19887942,'Surfing the internet','01:31:08'),('a566f69e',20233755,'2023-02-01 12:40:37',NULL,20220935,'2023-02-01 13:24:14',NULL,20220935,'Studying','00:43:37'),('a74d4d68',20287140,'2023-01-31 21:01:47',20227955,20220943,'2023-01-31 21:36:44',NULL,20220943,'WedPol/Editing','00:34:57'),('a7cc20bc',19888593,'2023-02-02 18:19:14',NULL,19887942,'2023-02-02 19:14:15',20227955,20220935,'study','00:55:01'),('aac42311',21427224,'2023-02-03 14:13:46',NULL,19887942,'2023-02-04 12:40:51',19837277,19887942,'study','22:27:05'),('ab3f2e00',21436480,'2023-02-06 13:00:55',NULL,21422456,NULL,NULL,NULL,NULL,NULL),('ab71070b',21427224,'2023-02-06 11:41:43',NULL,20220935,NULL,NULL,NULL,NULL,NULL),('ab8caf7f',19887934,'2023-02-01 12:06:18',NULL,20220935,'2023-02-01 12:19:44',NULL,20220935,'Chika','00:13:26'),('ab96d3d3',19837277,'2023-02-02 15:34:06',NULL,19886076,'2023-02-02 17:21:39',NULL,20220935,'Make the BB','01:47:33'),('af4b4b9a',19887942,'2023-02-02 21:02:45',NULL,20220935,'2023-02-02 21:34:46',NULL,20220943,'Duty','00:32:01'),('b012f27d',5870324,'2023-01-31 15:37:47',21436480,20220935,'2023-01-31 17:16:18',NULL,21422456,'rest','01:38:31'),('b2895875',19888593,'2023-02-01 11:24:42',19930841,21422456,'2023-02-01 12:23:23',NULL,20220935,'assignment','00:58:41'),('b55f26c8',19930841,'2023-01-31 10:28:32',20227955,20220935,'2023-01-31 15:30:45',NULL,21422456,'wedpol','05:02:13'),('b59bd24d',20220935,'2023-02-02 20:19:28',NULL,20220943,'2023-02-02 21:14:30',NULL,20220943,'studying','00:55:02'),('b843076a',20233755,'2023-02-02 09:35:34',NULL,19887942,'2023-02-02 09:55:42',NULL,20220935,'making bb output','00:20:08'),('bba74b74',21422456,'2023-01-30 14:50:57',20227336,19924414,'2023-01-30 18:18:51',NULL,19924414,'Consumables; Request Forms','00:44:54'),('bd6aa030',22713135,'2023-02-04 13:10:50',19930841,19887942,'2023-02-06 13:06:48',NULL,NULL,'Painting',NULL),('bd9f34cb',22702344,'2023-02-03 14:14:09',NULL,19887942,'2023-02-03 19:05:07',NULL,21422456,'Revised the layouts for ID and training','04:50:58'),('c2bededd',21422456,'2023-02-01 13:39:22',NULL,20220935,'2023-02-01 16:38:43',NULL,19886076,'Study; Beat Gathering Letters','02:59:21'),('c468c55f',5870324,'2023-02-03 14:14:39',NULL,19887942,'2023-02-03 18:46:13',NULL,19886076,'training and stamping receipts','04:31:34'),('c6fb6361',19378843,'2023-01-30 10:30:43',NULL,19924414,'2023-01-30 18:23:00',NULL,19924414,'duty','00:01:17'),('d31349f2',20220935,'2023-02-02 10:11:22',21427224,19887942,'2023-02-02 11:26:24',NULL,19887942,'Studying','01:15:02'),('d4b02728',21427224,'2023-02-01 11:39:22',19837277,19887942,'2023-02-01 16:46:34',22702344,19887942,'helped the making the bb, studied','05:07:12'),('d4c181e5',19888593,'2023-01-31 11:30:27',20233755,19887934,'2023-01-31 14:53:30',NULL,21422456,'chilling ','03:23:03'),('d5283f94',20227955,'2023-02-01 10:31:10',NULL,19887942,'2023-02-01 14:33:26',NULL,19887942,'BB','04:02:16'),('d702d826',21436266,'2023-02-01 14:53:00',19930841,19886076,'2023-02-01 19:38:24',NULL,19887942,'Thursday thoughts, chika','04:45:24'),('d8162594',18740779,'2023-02-02 12:03:48',NULL,19887942,'2023-02-02 17:50:25',NULL,20220935,'Cut out design for BB','05:46:37'),('dbf1c5b5',19837277,'2023-02-04 12:42:28',19930841,19887942,'2023-02-06 10:40:48',NULL,19887942,'Not Counted','00:00:01'),('dcf3bcfb',19887934,'2023-01-31 12:04:09',NULL,20220935,'2023-01-31 12:30:55',NULL,21422456,'Chika','00:26:46'),('dcf660ed',19888593,'2023-02-02 10:24:10',21427224,20220935,'2023-02-02 11:11:19',NULL,19887942,'sleep','00:47:09'),('dda8e4c5',20233755,'2023-01-31 11:22:06',19888593,19887934,'2023-01-31 12:26:16',NULL,20220935,'making bb output','01:04:10'),('e2d624c3',19378843,'2023-02-01 12:58:52',NULL,20220935,'2023-02-01 15:10:25',NULL,19887942,'duty','02:11:33'),('e36076f3',19837277,'2023-01-31 13:00:49',NULL,21422456,'2023-01-31 14:26:03',NULL,21422456,'Take the UC Property Sticker','01:25:14'),('ebbcd98c',20227336,'2023-02-02 19:03:40',20227955,20220935,NULL,NULL,NULL,NULL,NULL),('ebc794ff',19924414,'2023-01-30 16:32:56',NULL,19886076,'2023-01-30 18:18:38',NULL,21422456,'Making layout and updating DTR','01:45:42'),('ed30fbeb',5870324,'2023-02-04 12:01:14',22702344,19887942,'2023-02-06 11:45:47',NULL,20220935,'general cleaning','00:00:01'),('ef41b68a',20287140,'2023-02-01 11:36:32',22702344,19887942,'2023-02-01 14:26:23',NULL,19887942,'Photowalk and BB','02:49:51'),('f238e8cc',21422456,'2023-01-31 14:31:10',NULL,20220935,'2023-01-31 17:24:13',NULL,19887942,'Letters','02:53:03'),('f2d36774',20287140,'2023-02-02 20:18:56',NULL,20220935,'2023-02-02 20:31:00',NULL,20220935,'transfer photos','00:12:04'),('f63ad9a5',21422456,'2023-01-31 12:45:35',NULL,19887942,'2023-01-31 13:26:34',NULL,20220935,'Study; Eat','00:40:59'),('f975a26a',22713135,'2023-02-01 12:52:17',NULL,20220935,'2023-02-01 15:28:00',22702344,19887942,'Wed Pol','02:35:43'),('f97f981d',19887942,'2023-02-01 10:20:43',NULL,21422456,'2023-02-01 19:46:04',NULL,19924414,'Photo walk, Letters, Calls','09:25:21'),('f9ede273',20231577,'2023-01-30 17:43:20',NULL,21422456,'2023-01-31 16:24:25',NULL,20220935,'Studying','22:41:05'),('fb4d4e1a',20220935,'2023-01-31 13:38:03',NULL,19887942,'2023-01-31 17:57:31',NULL,19887942,'making writeup ','04:19:28'),('fbe9eec5',20231577,'2023-01-31 16:26:13',NULL,20220935,'2023-01-31 17:25:36',NULL,19887942,'Beat Gathering','00:59:23');
+/*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `member`
 --
 
+DROP TABLE IF EXISTS `member`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `member` (
   `id_number` int(8) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -80,135 +72,81 @@ CREATE TABLE `member` (
   `lastname` varchar(255) NOT NULL,
   `birthdate` date NOT NULL,
   `positionID` varchar(50) NOT NULL,
-  `contact_number` int(11) DEFAULT NULL,
-  `dp_filename` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `contact_number` varchar(11) DEFAULT NULL,
+  `dp_filename` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_number`),
+  KEY `positionID` (`positionID`),
+  CONSTRAINT `member_ibfk_1` FOREIGN KEY (`positionID`) REFERENCES `position` (`positionID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `member`
 --
 
-INSERT INTO `member` (`id_number`, `password`, `firstname`, `middlename`, `lastname`, `birthdate`, `positionID`, `contact_number`, `dp_filename`) VALUES
-(19887942, 'lakandiwa123', 'HASNA ALTHEA', 'MEDALLO', 'DELOS REYES', '2000-05-01', '7d45d74e', 2147483647, '19887942.jpg'),
-(19924414, 'lakandiwa123', 'NATHANIEL', 'CABUAL', 'TIEMPO', '2000-02-23', '462b4ec9', 2147483647, '19924414.jpg'),
-(20220943, 'lakandiwa123', 'KYLA', 'D', 'BINONDO', '2002-05-02', 'fe4d0272', 2147483647, '20220943.jpg'),
-(20227336, 'lakandiwa123', 'TRIXIA GLENN', 'B', 'VELEZ', '2001-12-05', 'ec5ca665', 2147483647, '20227336.jpg'),
-(20231577, 'lakandiwa123', 'DAVE', 'N', 'RACAZA', '2002-05-12', 'ec5ca665', 2147483647, '20231577.jpg'),
-(21422456, 'lakandiwa123', 'CATHYRENE ', 'A', 'GIMENEZ', '2003-06-03', 'bc343cdb', 2147483647, '21422456.jpg');
-
--- --------------------------------------------------------
+LOCK TABLES `member` WRITE;
+/*!40000 ALTER TABLE `member` DISABLE KEYS */;
+INSERT INTO `member` VALUES (5870324,'123','JUVYL','T','SABANAL','1986-09-24','eb63899d','09218611119','05870324.jpg'),(18740779,'lakandiwa123','BERNADINE','E','GARCIA','1998-08-17','deaafd9b','09672193878','18740779.jpg'),(19378843,'lakandiwa123','NINETTE ANN','CRUZADA','BUGHAO','2000-07-31','7c3e93d3','2147483647','19378843.jpg'),(19837277,'lakandiwa123','MARK DENVER ','Y','HONTIVEROS','2000-07-08','72489d17','09686853871','19837277.jpg'),(19886076,'lakandiwa123','ADAM','LUCERO','SOLON','2001-06-21','dad600ad','2147483647','19886076.jpg'),(19887934,'lakandiwa123','ARRIANE KAYE','L','RACAZA','2000-10-03','e7eebb52','2147483647','19887934.jpg'),(19887942,'1HASNAalthea.','HASNA ALTHEA','MEDALLO','DELOS REYES','2000-05-01','7d45d74e','09420388988','19887942.jpg'),(19888593,'1Delacruz','REMUEL','BODERO','DELA CRUZ','2000-02-04','72489d17','09151367541','19888593.jpg'),(19897826,'lakandiwa123','ANGELA MAE','S','TORRES','2001-03-26','b3518900','2147483647','19897826.jpg'),(19924414,'natnat2232000','NATHANIEL','CABUAL','TIEMPO','2000-02-23','462b4ec9','2147483647','19924414.jpg'),(19930841,'lakandiwa123','CHRISTIAN JACOB','B','DEIMOS','2003-08-27','deaafd9b','09361147032','19930841.jpg'),(20220935,'kyzenjournal143','KYZEN','D','BINONDO','2002-05-02','22b686ad','09491848503','20220935.jpg'),(20220943,'kayi_PJ_MD','KYLA','D','BINONDO','2002-05-02','fe4d0272','2147483647','20220943.jpg'),(20227336,'Caperdiem1','TRIXIA GLENN','BARIWA','VELEZ','2001-12-05','ec5ca665','2147483647','20227336.jpg'),(20227955,'lakandiwa123','JOHN CLEISTER','C','BARRIENTOS','2002-06-14','deaafd9b','09978600689','20227955.jpg'),(20231577,'lakandiwa123','DAVE','N','RACAZA','2002-05-12','ec5ca665','2147483647','20231577.jpg'),(20233755,'lakandiwa123','SARC FRANCIS ADRIANNE ','T','AMPO-ON','2001-10-11','72489d17','09203780708','20233755.jpg'),(20287140,'lakandiwa123','KARREN MARIE','B','SISMAR','2002-04-09','deaafd9b','09755039949','20287140.jpg'),(21422456,'Lavender Haze','CATHYRENE','ARCILLAS','GIMENEZ','2003-06-10','bc343cdb','09667413990','21422456.jpg'),(21427224,'123456','LEN','D','NUÑEZ','2003-05-21','eb63899d','09490198899','21427224.jpg'),(21436266,'lakandiwa123','ARGYLE JOSEPH ','M','LAURONILLA','2003-03-14','ec5ca665','09277719121','21436266.jpg'),(21436480,'2002Tatine!','MARIE CHASTINE','V','LANZADERAS','2002-03-21','eb63899d','09206134009','21436480.jpg'),(22702344,'Adrienne_9','ADRIENNE','C','EYAO','2003-09-09','eb63899d','09661886312','22702344.jpg'),(22713135,'lakandiwa123','NICHOLS JOHN','M','ILLUT','2002-09-17','deaafd9b','09519332394','22713135.jpg');
+/*!40000 ALTER TABLE `member` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `position`
 --
 
+DROP TABLE IF EXISTS `position`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `position` (
   `positionID` varchar(50) NOT NULL,
   `position` varchar(50) NOT NULL,
-  `position_level` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `position_level` varchar(50) NOT NULL,
+  PRIMARY KEY (`positionID`),
+  KEY `position_level` (`position_level`),
+  CONSTRAINT `position_ibfk_1` FOREIGN KEY (`position_level`) REFERENCES `position_level` (`position_level`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `position`
 --
 
-INSERT INTO `position` (`positionID`, `position`, `position_level`) VALUES
-('22b686ad', 'Feature Editor', 'Editorial Board'),
-('462b4ec9', 'Graphics Editor', 'Editorial Board'),
-('72489d17', 'Cartoonist', 'Senior Staff'),
-('7c3e93d3', 'Art Editor', 'Editorial Board'),
-('7d45d74e', 'Editor in Chief', 'Editorial Board'),
-('b3518900', 'Planning and Research Director', 'Editorial Board'),
-('bc343cdb', 'Finance Manager', 'Editorial Board'),
-('c22dc245', 'Creative Director', 'Editorial Board'),
-('dad600ad', 'Photo Editor', 'Editorial Board'),
-('deaafd9b', 'Photojournalist', 'Senior Staff'),
-('e7eebb52', 'Online Editor', 'Editorial Board'),
-('eb63899d', 'Layout Artist', 'Senior Staff'),
-('ec5ca665', 'Writer', 'Senior Staff'),
-('fe4d0272', 'Managing Director', 'Editorial Board');
-
--- --------------------------------------------------------
+LOCK TABLES `position` WRITE;
+/*!40000 ALTER TABLE `position` DISABLE KEYS */;
+INSERT INTO `position` VALUES ('22b686ad','Feature Editor','Editorial Board'),('462b4ec9','Graphics Editor','Editorial Board'),('72489d17','Cartoonist','Senior Staff'),('7c3e93d3','Art Editor','Editorial Board'),('7d45d74e','Editor in Chief','Editorial Board'),('9ea3e6db','Ethics and Legal Standards Editor','Editorial Board'),('b3518900','Planning and Research Director','Editorial Board'),('bc343cdb','Finance Manager','Editorial Board'),('dad600ad','Photo Editor','Editorial Board'),('deaafd9b','Photojournalist','Senior Staff'),('e7eebb52','Online Editor','Editorial Board'),('eb63899d','Layout Artist','Senior Staff'),('ec5ca665','Writer','Senior Staff'),('fe4d0272','Managing Director','Editorial Board');
+/*!40000 ALTER TABLE `position` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `position_level`
 --
 
+DROP TABLE IF EXISTS `position_level`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `position_level` (
-  `position_level` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `position_level` varchar(50) DEFAULT NULL,
+  UNIQUE KEY `position_level` (`position_level`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `position_level`
 --
 
-INSERT INTO `position_level` (`position_level`) VALUES
-('Editorial Board'),
-('Junior Staff'),
-('Senior Staff');
+LOCK TABLES `position_level` WRITE;
+/*!40000 ALTER TABLE `position_level` DISABLE KEYS */;
+INSERT INTO `position_level` VALUES ('Editorial Board'),('Junior Staff'),('Senior Staff');
+/*!40000 ALTER TABLE `position_level` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `attendance`
---
-ALTER TABLE `attendance`
-  ADD PRIMARY KEY (`attendanceID`),
-  ADD KEY `id_number` (`id_number`),
-  ADD KEY `signature_time_in` (`signature_time_in`),
-  ADD KEY `signature_time_out` (`signature_time_out`),
-  ADD KEY `countersign_time_in` (`countersign_time_in`),
-  ADD KEY `countersign_time_out` (`countersign_time_out`);
-
---
--- Indexes for table `member`
---
-ALTER TABLE `member`
-  ADD PRIMARY KEY (`id_number`),
-  ADD KEY `positionID` (`positionID`);
-
---
--- Indexes for table `position`
---
-ALTER TABLE `position`
-  ADD PRIMARY KEY (`positionID`),
-  ADD KEY `position_level` (`position_level`);
-
---
--- Indexes for table `position_level`
---
-ALTER TABLE `position_level`
-  ADD UNIQUE KEY `position_level` (`position_level`);
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `attendance`
---
-ALTER TABLE `attendance`
-  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`id_number`) REFERENCES `member` (`id_number`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`signature_time_in`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`signature_time_out`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `attendance_ibfk_4` FOREIGN KEY (`countersign_time_in`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `attendance_ibfk_5` FOREIGN KEY (`countersign_time_out`) REFERENCES `member` (`id_number`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Constraints for table `member`
---
-ALTER TABLE `member`
-  ADD CONSTRAINT `member_ibfk_1` FOREIGN KEY (`positionID`) REFERENCES `position` (`positionID`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `position`
---
-ALTER TABLE `position`
-  ADD CONSTRAINT `position_ibfk_1` FOREIGN KEY (`position_level`) REFERENCES `position_level` (`position_level`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-02-06 15:04:02

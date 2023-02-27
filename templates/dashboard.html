@@ -68,7 +68,8 @@ Dashboard
           <p class="text-sm mb-0 text-capitalize">Rendered Hours Today</p>
           <h4 class="mb-0">
             {% if today_totalhours is defined %}
-            {{today_totalhours.total_rendered}}
+
+            {{today_totalhours}}
             {% endif%}
           </h4>
         </div>
@@ -90,7 +91,7 @@ Dashboard
           <p class="text-sm mb-0 text-capitalize">Rendered Hours This Week</p>
           <h4 class="mb-0">
             {% if week_totalhours is defined %}
-            {{week_totalhours.total_rendered}}
+            {{week_totalhours}}
             {% endif%}
           </h4>
         </div>
@@ -112,7 +113,7 @@ Dashboard
           <p class="text-sm mb-0 text-capitalize">Rendered Hours This Month</p>
           <h4 class="mb-0">
             {% if month_totalhours is defined %}
-            {{month_totalhours.total_rendered}}
+            {{month_totalhours}}
             {% endif%}
           </h4>
         </div>
@@ -187,19 +188,16 @@ Dashboard
         <h6 class="mb-0 "> Time Out </h6>
         <p class="text-sm ">Status:
           {% if current_timed is defined and current_timed is not none %}
-          {% if current_timed.signature_time_in is none and current_timed.time_in is none%}
-          Waiting for time in to be signed
-          {% endif%}
-          {% if current_timed.signature_time_in is not none and current_timed.time_in is not none and
-          current_timed.time_out is not none and current_timed.signature_time_out is none %}
+    
+          {% if current_timed.time_in is not none and
+          current_timed.time_out is not none %}
           <span class="badge bg-gradient-danger">To be Signed</span>
           {% endif %}
           {% endif%}
 
         </p>
         {% if current_timed is defined and current_timed is not none %}
-        {% if current_timed.signature_time_in is not none and current_timed.time_in is not none and
-        current_timed.time_out is none %}
+        {% if current_timed.time_in is not none and current_timed.time_out is none %}
         <button type="button" class="btn btn-outline-info btn-lg w-100" data-bs-toggle="modal"
           data-bs-target="#modal_time_out">Time Out</button>
         {% else %}
