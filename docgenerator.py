@@ -6,11 +6,11 @@ from app import get_reports_month_rendered_hours, format_timedelta
 
 
 
-def generatedoc():
+def generatedoc(month,year):
     # Initialise the Word document
     doc = docx.Document()
-    month = datetime.now().month
-    year = datetime.now().year
+    month = int(month)
+    year = int(year)
     headers = ['Name', 'Total Hours Rendered', 'Remarks']
     month_totalhours = get_reports_month_rendered_hours(month, year)
     month_totalhours = list(month_totalhours)
@@ -36,7 +36,7 @@ def generatedoc():
 
     df = pd.DataFrame(data)
     print(df)
-    month = calendar.month_name[month]
+    month = calendar.month_name[int(month)]
 
     doc.add_heading(f'Lakandiwa {month} {year} DTR Report', 0)
 

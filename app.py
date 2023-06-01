@@ -21,8 +21,9 @@ env.add_extension('jinja2.ext.do')
 app.jinja_env.add_extension('jinja2.ext.do')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
-app.config['MYSQL_PORT'] = 3307
+# app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
+app.config['MYSQL_PASSWORD'] = 'nathaniel'
+app.config['MYSQL_PORT'] = 3308
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MYSQL_DB'] = 'lakandiwa'
 app.config["REPORT_PATH"] = "reports/"
@@ -317,6 +318,7 @@ def insert_data(table:str, fields, value)->bool:
     cur.close()
     return True
 
+
 def delete_data(table:str, field, value)->bool:
     cur = mysql.connection.cursor()
     cur.execute(f"DELETE FROM `{table}` WHERE `{field}` = '{value}' ")
@@ -331,7 +333,7 @@ def update_data(table:str, fields, values)->bool:
         for i in range(len(fields)):
             flds.append(f"`{fields[i]}` = '{values[i]}'")
         flds_final = ", ".join(flds)
-        cur.execute(f"UPDATE `{table}` SET {flds_final} WHERE `{fields[0]}` = '{values[0]}'")
+        cur.execute(f'''UPDATE `{table}` SET {flds_final} WHERE `{fields[0]}` = "{values[0]}" ''')
         mysql.connection.commit()
         cur.close()
         return True
@@ -355,21 +357,34 @@ def get_specific_data(table:str, fields, values):
         cur.close()
         return data
 
+#delete stamps that are not timed out on a previous day
+def void_forgotten_stamps():
+    cur = mysql.connection.cursor()
+    cur.execute(f'''DELETE FROM `attendance` WHERE time_out IS NULL AND date(`time_in`) != curdate()''')
+    mysql.connection.commit()
+    cur.close()
 
-
-
-        
-
-
+def get_oldest_newest_record():
+    cur = mysql.connection.cursor()
+    cur.execute(f'''SELECT DATE(MIN(time_in)) as min, DATE(MAX(time_in)) as max FROM lakandiwa.attendance''')
+    data:dict = cur.fetchone()
+    mysql.connection.commit()
+    cur.close()
+    return data
 
 @app.route("/")
 def index():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     # backup_database()
     return redirect(url_for('login', message= 'ok'))
 
 
 @app.route("/login/<message>")
 def login(message:str):
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     title = "Log in"
     if message == 'ok':
         return render_template("index.html", title=title)
@@ -386,6 +401,9 @@ def login(message:str):
         return abort(404, "Page not found")
 @app.route("/loginAccount" , methods=['POST'])
 def loginAccount():
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     user = request.form['username']
     password = request.form['password']
 
@@ -408,11 +426,10 @@ def loginAccount():
 
 @app.route("/dashboard")
 def dashboard():
-
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
-    
-    
     title = "Dashboard"
 
     now = datetime.now()
@@ -486,9 +503,12 @@ def time_out():
 
 @app.route("/positions")
 def positions():
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
-
+    
 
     accountuser = get_data('member', 'id_number', session['user_id'])
     title = "Positions"
@@ -509,14 +529,12 @@ def positions():
 
 @app.route("/addpositionlevel", methods=['POST'])
 def addpositionlevel():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
-
     position_level = request.form['position_level']
-
     exist = get_data('position_level', 'position_level', position_level)
-
-
     if not exist and position_level:
         now = datetime.now()
         date_now = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -553,6 +571,9 @@ def addpositionlevel():
 
 @app.route("/addposition", methods=['POST'])
 def addposition():
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
 
@@ -705,6 +726,8 @@ def deleteaccount():
 
 @app.route("/accountlist")
 def accountlist():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     
@@ -728,6 +751,8 @@ def accountlist():
 
 @app.route("/addmember", methods=['POST'])
 def addmember():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
 
@@ -800,6 +825,8 @@ def addmember():
 
 @app.route("/signing")
 def signing():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
 
@@ -827,7 +854,8 @@ def signing():
 
 @app.route("/countersign/<type>/<attendanceID>/<id_number>")
 def countersign(type:str, attendanceID:str, id_number:str):
-    
+    #delete forgotten stamps
+    void_forgotten_stamps()
     exist_attendance = get_specific_data('attendance', ['attendanceID'], [attendanceID])
     exist_member = get_specific_data('member', ['id_number'], [id_number])
     accepted_type = ['in', 'out']
@@ -848,6 +876,8 @@ def countersign(type:str, attendanceID:str, id_number:str):
         return abort(404, "Page not found")
 @app.route("/sign/<type>/<attendanceID>/<id_number>")
 def sign(type:str, attendanceID:str, id_number:str):
+    #delete forgotten stamps
+    void_forgotten_stamps()
     exist_attendance = get_specific_data('attendance', ['attendanceID'], [attendanceID])
     exist_member = get_specific_data('member', ['id_number'], [id_number])
     accepted_type = ['in', 'out']
@@ -877,7 +907,8 @@ def sign(type:str, attendanceID:str, id_number:str):
 
 @app.route("/rejectsign/<type>/<attendanceID>")
 def rejectsign(type:str, attendanceID:str):
-    
+    #delete forgotten stamps
+    void_forgotten_stamps()
     exist_attendance = get_specific_data('attendance', ['attendanceID'], [attendanceID])
     allowed_type = ['in', 'out']
     if exist_attendance:
@@ -900,7 +931,8 @@ def rejectsign(type:str, attendanceID:str):
 
 @app.route("/attendance")
 def attendance():
-
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     
@@ -1033,6 +1065,8 @@ def attendance():
 
 @app.route("/profile")
 def profile():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     title = "Profile"
@@ -1055,7 +1089,8 @@ def profile():
 
 @app.route("/changepassword", methods=['POST'])
 def changepassword():
-
+    #delete forgotten stamps
+    void_forgotten_stamps()
     id_number = request.form['id_number']
     newpassword = request.form['newpassword']
     confirmpassword = request.form['confirmpassword']
@@ -1067,6 +1102,9 @@ def changepassword():
 
 @app.route("/changeprofilepicture")
 def changeprofilepicture():
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     title = "Change Profile Picture"
@@ -1085,6 +1123,9 @@ def changeprofilepicture():
 
 @app.route("/updateprofilepicture", methods=['POST'])
 def updateprofilepicture():
+    #delete forgotten stamps
+    void_forgotten_stamps()
+
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     if 'profile_picture' in request.files:
@@ -1105,6 +1146,8 @@ def updateprofilepicture():
 
 @app.route("/updateprofileinfo", methods=['POST'])
 def updateprofileinfo():
+    #delete forgotten stamps
+    void_forgotten_stamps()
 
     id_number = request.form['id_number']
     firstname = request.form['firstname']
@@ -1124,19 +1167,37 @@ def updateprofileinfo():
 
 @app.route("/reports")
 def reports():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     if 'user_id' not in session:
         return redirect(url_for('login', message= 'Login first'))
     title = "Reports"
+    date = request.args.get('date')
+    currentMonth = datetime.now().month
+    currentYear = datetime.now().year
+    mnth = str(currentMonth)
+    data_old_new = get_oldest_newest_record()
+
+    min = str(data_old_new['min'])[0:7]
+    max = str(data_old_new['max'])[0:7]
+
+    if date is None:
+        if currentMonth < 10:
+            mnth = f'0{currentMonth}'
+        date = f'{currentYear}-{mnth}'
+
+    print("DATE", date)
     log_user = session['user_id']
     error = request.args.get('error')
     success = request.args.get('success')
     accountuser = get_data('member', 'id_number', session['user_id'])
     members = get_all_data('member')
     positions = get_all_data('position')
-    currentMonth = datetime.now().month
-    currentYear = datetime.now().year
+    
 
-    month_totalhours = get_reports_month_rendered_hours(currentMonth, currentYear)
+    date_data = date.split('-')
+    
+    month_totalhours = get_reports_month_rendered_hours(date_data[1], date_data[0])
     for each in month_totalhours:
         each['total_rendered'] = str(format_timedelta(each['total_rendered']))
     
@@ -1148,16 +1209,26 @@ def reports():
     success = success,
     accountuser = accountuser,
     members = members ,
-    positions = positions
+    positions = positions,
+    date=date,
+    mnth = currentMonth,
+    year = currentYear,
+    min = min,
+    max = max
     )
     
-@app.route("/generatereport")
+@app.route("/generatereport", methods=['POST'])
 def generatereport():
-    docgenerator.generatedoc()
+
+    date = request.form['value_date']
+    final_date = date.split('-')
+
+    #delete forgotten stamps
+    void_forgotten_stamps()
+    docgenerator.generatedoc(int(final_date[1]), int(final_date[0]))
     try:
-        month = datetime.now().month
-        month = calendar.month_name[month]
-        year = datetime.now().year
+        month = calendar.month_name[int(final_date[1])]
+        year = int(final_date[0])
         filename = f'{month}_{year}_DTR_report.docx'
         return send_from_directory(directory=app.config["REPORT_PATH"], path=filename, as_attachment=True)
     except FileNotFoundError:
@@ -1166,8 +1237,12 @@ def generatereport():
 
 @app.route("/logout")
 def logout():
+    #delete forgotten stamps
+    void_forgotten_stamps()
     session.clear()
     return redirect(url_for('index'))
+
+
 
 @app.after_request
 def after_request(response):
