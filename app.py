@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,  redirect, url_for, session, abort, jsonify
+from flask import Flask, render_template, request,  redirect, url_for, session, abort, jsonify,send_from_directory
 import re
 import os
 from os.path import exists
@@ -9,6 +9,9 @@ from flask_mysqldb import MySQL
 from PIL import Image
 import shutil
 import subprocess
+import docgenerator
+import calendar
+
 
 app=Flask(__name__)
 app.secret_key = "Lakandiwa2023"
@@ -18,10 +21,11 @@ env.add_extension('jinja2.ext.do')
 app.jinja_env.add_extension('jinja2.ext.do')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
+app.config['MYSQL_PORT'] = 3307
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MYSQL_DB'] = 'lakandiwa'
-
+app.config["REPORT_PATH"] = "reports/"
 
 mysql = MySQL(app)
 
@@ -79,8 +83,8 @@ def check_date(date:str)->bool:
     return valid
 
 
-def backup_database():
-    subprocess.call([r'C:/Lakandiwa_Attendance_System/Lakandiwa_Attendance_System/backup.bat'])
+# def backup_database():
+#     subprocess.call([r'C:/Lakandiwa_Attendance_System/Lakandiwa_Attendance_System/backup.bat'])
 
 
 def format_timedelta(td):
@@ -271,6 +275,14 @@ def get_total_month_rendered_hours(id_number, month, year)->dict:
     cur.close()
     return data
 
+def get_reports_month_rendered_hours(month, year)->dict:
+    cur = mysql.connection.cursor()
+    cur.execute(f'SELECT CONCAT(member.lastname,", ", member.firstname," ", left(member.middlename,1),".") AS name, CONCAT(position.position_level, " ", position.position) AS position, SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered))) AS total_rendered, IF(HOUR(SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered))))>40,"Complete", "Incomplete") AS remarks from member,position,attendance  WHERE member.id_number = attendance.id_number AND member.positionID = position.positionID AND MONTH(attendance.time_in) = "{month}" AND YEAR(attendance.time_in) = "{year}" GROUP BY member.id_number ORDER BY total_rendered DESC')
+    data:dict = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return data
+
 def get_unsigned_time_in()->dict:
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT * FROM `attendance` WHERE `signature_time_in` IS NULL")
@@ -326,16 +338,18 @@ def update_data(table:str, fields, values)->bool:
     else:
         return False
 
-
 def get_specific_data(table:str, fields, values):
     cur = mysql.connection.cursor()
     flds = []
     
     if len(fields) == len(values):
         for i in range(len(fields)):
-            flds.append(f"`{fields[i]}` = '{values[i]}'")
+            if type(values[i]) == str:
+                flds.append(f'`{fields[i]}` = "{values[i]}"')
+            else:
+                flds.append(f"`{fields[i]}` = {values[i]}")
         flds_final = " AND ".join(flds)
-        cur.execute(f"SELECT * FROM {table} WHERE {flds_final}")
+        cur.execute(f'SELECT * FROM {table} WHERE {flds_final}')
         data:dict = cur.fetchone()
         mysql.connection.commit()
         cur.close()
@@ -350,7 +364,7 @@ def get_specific_data(table:str, fields, values):
 
 @app.route("/")
 def index():
-    backup_database()
+    # backup_database()
     return redirect(url_for('login', message= 'ok'))
 
 
@@ -455,7 +469,7 @@ def time_in():
     attendanceID = generateID(str(id_number) + str(now))
     data = [attendanceID, id_number, str(now)]
     insert_data('attendance',fields, data)
-    backup_database()
+    # backup_database()
     return redirect(url_for('dashboard'))
 
 @app.route("/time_out", methods=['POST'])
@@ -466,7 +480,7 @@ def time_out():
     fields = ['attendanceID', 'time_out', 'work_done']
     data = [attendanceID, str(now), work_done]
     update_data('attendance', fields, data)
-    backup_database()
+    # backup_database()
     return redirect(url_for('dashboard'))
 
 
@@ -531,7 +545,7 @@ def addpositionlevel():
         data.append(position_level)
         insert_data('position_level', fields, data)
         message = f"Position level {position_level} successfully added"
-        backup_database()
+        # backup_database()
         return redirect(url_for("positions", sucess=message))
     else:
         message = f"Position level {position_level} already exist!"
@@ -588,7 +602,7 @@ def addposition():
         text.close()
         insert_data('position', flds, data)
         message = f"Position {position } successfully added."
-        backup_database()
+        # backup_database()
         return redirect(url_for('positions', success=message))
     else:
         message = f"Position {position} already exist!"
@@ -623,7 +637,7 @@ def deletepositionlevel():
         text.write("\n\n")
         text.close()
         delete_data('position_level', 'position_level', pos)
-        backup_database()
+        # backup_database()
    success = f'Position level(s) deleted'
    return redirect(url_for("positions", success=success))
 
@@ -651,7 +665,7 @@ def deleteposition():
         text.write("\n\n")
         text.close()
         delete_data('position', 'positionID', pos)
-        backup_database()
+        # backup_database()
    success = f'Position(s) deleted'
    return redirect(url_for("positions", success=success))
 
@@ -685,7 +699,7 @@ def deleteaccount():
         delete_data('member', 'id_number', account)
         path = app.config['MEMBER_PATH']+ account
         shutil.rmtree(path)
-        backup_database()
+        # backup_database()
     success = 'Account(s) deleted'
     return redirect(url_for('accountlist', success= success))
 
@@ -772,7 +786,7 @@ def addmember():
         data = [id_number,password, firstname,middlename,lastname,birthdate,position, contact_number, dp_final ]
 
         insert_data('member', fields, data)
-        backup_database()
+        # backup_database()
         message = f"Successfully added { lastname}, {firstname} {middlename} as member"
         return redirect(url_for('accountlist', success=message))
 
@@ -827,7 +841,7 @@ def countersign(type:str, attendanceID:str, id_number:str):
         attendance_signed = get_data('attendance', 'attendanceID', attendanceID)
         user_signed = get_data('member', 'id_number', attendance_signed['id_number'])
         user_signer = get_data('member', 'id_number', id_number)
-        backup_database()
+        # backup_database()
         message = f"{user_signer['lastname']}, {user_signer['firstname']} {user_signer['middlename'][0].capitalize()} countersigned {user_signed['lastname']}, {user_signed['firstname']} {user_signed['middlename'][0].capitalize()}'s Time {type.capitalize()} Stamp"  
         return redirect(url_for('signing', success = message))
     else:
@@ -847,10 +861,11 @@ def sign(type:str, attendanceID:str, id_number:str):
             time_in = exist_attendance['time_in']
             time_out = exist_attendance['time_out']
 
-            time_rendered = time_out - time_in
+            time_rendered = format_timedelta(time_out - time_in)
             print(f"TIME RENDERED: {time_rendered}")
+      
             update_data('attendance', ['attendanceID', 'signature_time_out', 'time_rendered'], [attendanceID, id_number, time_rendered])
-        backup_database()
+        # backup_database()
         attendance_signed = get_data('attendance', 'attendanceID', attendanceID)
         user_signed = get_data('member', 'id_number', attendance_signed['id_number'])
         user_signer = get_data('member', 'id_number', id_number)
@@ -875,7 +890,7 @@ def rejectsign(type:str, attendanceID:str):
 
 
             message = f"Successfully rejected {user_signed['lastname']}, {user_signed['firstname']} {user_signed['middlename'][0].capitalize()}'s Time {type.capitalize()} Stamp"  
-            backup_database()
+            # backup_database()
             return redirect(url_for('signing', success = message))
         else:
             
@@ -1047,7 +1062,7 @@ def changepassword():
 
     update_data('member', ['id_number', 'password'], [id_number,confirmpassword])
     message = "You have successfully changed your password."
-    backup_database()
+    # backup_database()
     return redirect(url_for('profile', success = message))
 
 @app.route("/changeprofilepicture")
@@ -1060,7 +1075,7 @@ def changeprofilepicture():
     accountuser = get_data('member', 'id_number', session['user_id'])
     members = get_all_data('member')
     positions = get_all_data('position')
-    backup_database()
+    # backup_database()
     return render_template("changeprofileimage.html", 
     title=title,
     log_user = log_user,
@@ -1082,7 +1097,7 @@ def updateprofilepicture():
         foo = foo.convert('RGB')
         foo = foo.resize((500,500),Image.ANTIALIAS)
         foo.save(f"{member_path}/{accountuser['id_number']}.jpg",optimize=True, quality=95)
-        backup_database()
+        # backup_database()
         return redirect(url_for('profile'))
     else:
         return redirect(url_for('profile'))
@@ -1101,11 +1116,53 @@ def updateprofileinfo():
     if id_number and firstname and middlename and lastname and birthdate and contact_number:
         update_data('member', ['id_number', 'firstname', 'middlename', 'lastname', 'birthdate', 'contact_number'], [id_number,firstname.upper(),middlename.upper(),lastname.upper(),birthdate,contact_number])
         message = "Profile Info updated successfully"
-        backup_database()
+        # backup_database()
         return redirect(url_for('profile', success=message))
     else:
         message = "Error updating profile info"
         return redirect(url_for('profile', error=message))
+
+@app.route("/reports")
+def reports():
+    if 'user_id' not in session:
+        return redirect(url_for('login', message= 'Login first'))
+    title = "Reports"
+    log_user = session['user_id']
+    error = request.args.get('error')
+    success = request.args.get('success')
+    accountuser = get_data('member', 'id_number', session['user_id'])
+    members = get_all_data('member')
+    positions = get_all_data('position')
+    currentMonth = datetime.now().month
+    currentYear = datetime.now().year
+
+    month_totalhours = get_reports_month_rendered_hours(currentMonth, currentYear)
+    for each in month_totalhours:
+        each['total_rendered'] = str(format_timedelta(each['total_rendered']))
+    
+    return render_template("reports.html",
+    title = title,
+    month_totalhours = month_totalhours,
+    log_user = log_user,
+    error =  error,
+    success = success,
+    accountuser = accountuser,
+    members = members ,
+    positions = positions
+    )
+    
+@app.route("/generatereport")
+def generatereport():
+    docgenerator.generatedoc()
+    try:
+        month = datetime.now().month
+        month = calendar.month_name[month]
+        year = datetime.now().year
+        filename = f'{month}_{year}_DTR_report.docx'
+        return send_from_directory(directory=app.config["REPORT_PATH"], path=filename, as_attachment=True)
+    except FileNotFoundError:
+        abort(404)
+
 
 @app.route("/logout")
 def logout():

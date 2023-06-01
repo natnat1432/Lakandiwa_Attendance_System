@@ -79,7 +79,7 @@
 
 
      
-           href="{{url_for('attendance', page='1', target='myrecord')}}">
+           href="{{url_for('attendance', page='1', target='myrecord', sort='desc')}}">
         
             <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="fa-solid fa-calendar-days"></i>
@@ -88,6 +88,56 @@
           </a>
         </li>
         {%endif%}
+        {% if log_user == 'admin' %}
+        <li class="nav-item">
+          <a class="nav-link
+          {% if title == 'Reports' %}
+          text-light 
+          active
+          bg-gradient-info
+          {%else%}
+          text-dark 
+          {%endif%}"
+
+
+     
+           href="{{url_for('reports')}}">
+        
+            <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa-solid fa-chart-column"></i>
+            </div>
+            <span class="nav-link-text ms-1">Reports</span>
+          </a>
+        </li>
+        {%endif%}
+        {% if log_user != 'admin' %}
+          {% for pos in positions %}
+          {% if accountuser.positionID == pos.positionID %}
+          {% if 'Director' in pos.position or 'Editor in Chief' in pos.position%}
+          <li class="nav-item">
+            <a class="nav-link
+            {% if title == 'Reports' %}
+            text-light 
+            active
+            bg-gradient-info
+            {%else%}
+            text-dark 
+            {%endif%}"
+  
+  
+       
+             href="{{url_for('reports')}}">
+          
+              <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-chart-column"></i>
+              </div>
+              <span class="nav-link-text ms-1">Reports</span>
+            </a>
+          </li>
+          {% endif%}
+          {% endif%}
+          {% endfor%}
+        {% endif %}
         {% if log_user != 'admin'%}
         <li class="nav-item">
           <a class="nav-link

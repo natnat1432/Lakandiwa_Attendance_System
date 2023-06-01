@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{title}}
+{% endblock  %}
+
+   
+{% block head %}
+{% endblock %}
+
+{% block pagecontent %}
+<div class="container-fluid py-4">
+    <a href="{{url_for('generatereport')}}" class="btn btn-icon btn-3 bg-gradient-success" type="button">
+        <span class="btn-inner--icon"><i class="fa-solid fa-file-word"></i></span>
+      <span class="btn-inner--text">Download Word Document</span>
+    </a>
+    <div class="row">
+       
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Monthly Report</h6>
+            </div>
+          </div>
+          
+          <div class="card-body px-0 pb-2">
+        
+            <div class="table-responsive p-0">
+          
+              <table class="table align-items-center mb-2">
+                
+                <thead>
+                  
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Hours Rendered</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Remarks</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for report in month_totalhours %}
+                      <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                    
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{report.name}}</h6>
+                          <p class="text-xs text-secondary mb-0">{{report.position}}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">{{report.total_rendered}}</p>
+
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                        {% if report.remarks == 'Complete' %}
+                      <span class="badge badge-sm bg-gradient-success">{{report.remarks}}</span>
+                      {% else %}
+                      <span class="badge badge-sm bg-gradient-danger">{{report.remarks}}</span>
+                      {% endif %}
+                    </td>
+               
+           
+                  </tr>
+                  {% endfor %}
+                
+              
+             
+             
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+
+  </div>
+{% endblock %}

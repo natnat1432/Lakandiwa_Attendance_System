@@ -173,35 +173,35 @@ function nextPage(){
     if(filter == 'all')
     {
    
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page="+page;
     }
     if(filter == 'today')
     {
     
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page="+page;
     }
     if(filter == 'thisweek')
     {
 
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page="+page;
     }
     if(filter == 'lastweek')
     {
 
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&page="+page;
     }
     if(filter == 'day')
     {
         var day = document.getElementById("day_input_form").value;
      
     
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&day="+day+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&day="+day+"&page="+page;
     }
     if(filter == 'month')
     {
         var month = document.getElementById("month_input_form").value;
         
-        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&month="+month+"&page=1";
+        location.href = '/attendance?target='+target+'&filter='+filter+"&sort="+sort+"&month="+month+"&page="+page;
     }
    
 
