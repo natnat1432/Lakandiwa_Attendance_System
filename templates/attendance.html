@@ -13,13 +13,39 @@
 {% endif%}
 
 
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Delete Record</h5>
+        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this record? <input type="text" id="recordID" hidden>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-gradient-info" onclick="deleteRecord()">Yes</button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
           <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+            {% if target == 'myrecord' %}
             <h6 class="text-white ps-3">{{accountuser.firstname | title}}'s Attendance</h6>
+            {% endif %}
+            {% if target == 'allrecord' %}
+            <h6 class="text-white ps-3">All Members Attendance</h6>
+            {% endif %}
           </div>
         </div>
         <div class="card-body px-0 pb-2">
@@ -60,32 +86,32 @@
                     <label for="exampleFormControlSelect1" class="ms-0">Attendance</label>
                     <select class="form-control" id="target_attendance">
                       {% if target is not none and target is defined %}
-                          {% if target == 'myrecord' %}
-                          <option value="myrecord" selected>My Attendance</option>
-                          {% else %}
-                          <option value="myrecord" selected>My Attendance</option>
-                          {% endif %}
+                      {% if target == 'myrecord' %}
+                      <option value="myrecord" selected>My Attendance</option>
+                      {% else %}
+                      <option value="myrecord" selected>My Attendance</option>
+                      {% endif %}
 
-                          {% for pos in positions %}
-                          {% if accountuser.positionID == pos.positionID %}
-                          {% if 'Director' in pos.position or 'Editor in Chief' in pos.position%}
-                        
-                          {% if target == 'allrecord' %}
-                          <option value="allrecord" selected>All Members</option>
-                          {% else %}
-                          <option value="allrecord">All Members</option>
-                          {% endif %}
+                      {% for pos in positions %}
+                      {% if accountuser.positionID == pos.positionID %}
+                      {% if 'Director' in pos.position or 'Editor in Chief' in pos.position%}
 
-                          {% endif%}
-                          {% endif %}
-                          {% endfor %}
-                          
-                          {% endif %}
-                     
-                      
-            
-             
-                  
+                      {% if target == 'allrecord' %}
+                      <option value="allrecord" selected>All Members</option>
+                      {% else %}
+                      <option value="allrecord">All Members</option>
+                      {% endif %}
+
+                      {% endif%}
+                      {% endif %}
+                      {% endfor %}
+
+                      {% endif %}
+
+
+
+
+
                     </select>
                   </div>
                   <div class="input-group input-group-static mb-4 w-20 ms-3">
@@ -168,7 +194,7 @@
                   {%endif%}
 
 
-        
+
                 </div>
               </form>
             </div>
@@ -178,7 +204,7 @@
                 <tr>
                   {% if target is defined and target is not none%}
                   {% if target == 'allrecord' %}
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Member 
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Member
                   </th>
                   {%endif%}
                   {%endif%}
@@ -198,6 +224,19 @@
                   </th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time
                     Rendered</th>
+
+                    {% if log_user != 'admin' %}
+                    {% for pos in positions %}
+                    {% if accountuser.positionID == pos.positionID %}
+                    {% if 'Director' in pos.position or 'Editor in Chief' in pos.position%}
+
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Actions</th>
+                    
+                    {% endif%}
+                    {% endif%}
+                    {% endfor%}
+                  {% endif %}
                 </tr>
               </thead>
               <tbody>
@@ -206,16 +245,16 @@
                 <tr>
                   {% if target is defined and target is not none%}
                   {% if target == 'allrecord' %}
-                  
+
                   <td class="align-middle text-center">
                     <p class="text-xs font-weight-bold mb-0">
                       {% for each in members %}
-                        {% if total.id_number == each.id_number%}
-                          {{each.lastname | title }}, {{each.firstname | title }} {{each.middlename | first }}
+                      {% if total.id_number == each.id_number%}
+                      {{each.lastname | title }}, {{each.firstname | title }} {{each.middlename | first }}
                       {% endif %}
                       {% endfor %}
                     </p>
-                 
+
                   </td>
                   {% endif %}
                   {% endif %}
@@ -266,10 +305,11 @@
 
                   <td class="align-middle text-center">
                     {% if total.work_done is not none%}
-                    <span class="text-secondary text-xs font-weight-bold">{{total.work_done}}</span>
+                    <textarea style="resize: none; width:200px; white-space: pre-wrap; height:100px; border:1px solid gray; outline:none; border-radius:5px;  padding:5px;"
+                      readonly>{{total.work_done}}</textarea>
                     {% else %}
-                    <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No work
-                        done yet</span></span>
+                    <textarea style="resize:none; width:200px; white-space: pre-wrap; height:100px; border:1px solid gray;  outline:none; border-radius:5px; padding:5px;"
+                      readonly>No work done yet</textarea>
 
                     {% endif %}
                   </td>
@@ -335,6 +375,19 @@
                     </span>
                     {% endif %}
                   </td>
+                  {% if log_user != 'admin' %}
+                  {% for pos in positions %}
+                  {% if accountuser.positionID == pos.positionID %}
+                  {% if 'Director' in pos.position or 'Editor in Chief' in pos.position%}
+
+                  <td class="align-middle text-center">
+                    <button onclick="setDeleteModal('{{total.attendanceID}}')" data-bs-toggle="modal" data-bs-target="#deleteModal" style="background-color:transparent; outline:none; border:none;"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+
+                  {% endif%}
+                  {% endif%}
+                  {% endfor%}
+                {% endif %}
 
                 </tr>
                 {% endfor %}

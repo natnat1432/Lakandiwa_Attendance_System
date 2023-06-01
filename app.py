@@ -929,6 +929,20 @@ def rejectsign(type:str, attendanceID:str):
     else:
         return abort(404, "Page not found")
 
+@app.route("/deleteRecord")
+def deleteRecord():
+    attendanceID = request.args.get("attendanceID")
+
+    target = request.args.get('target')
+    filter = request.args.get('filter')
+    sort = request.args.get('sort')
+    page = request.args.get('page')
+
+    delete = delete_data('attendance', 'attendanceID', attendanceID)
+
+    if delete:
+        return redirect(url_for('attendance', target=target, filter=filter, sort=sort, page=page))
+    
 @app.route("/attendance")
 def attendance():
     #delete forgotten stamps
