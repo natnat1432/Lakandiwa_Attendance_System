@@ -21,9 +21,8 @@ env.add_extension('jinja2.ext.do')
 app.jinja_env.add_extension('jinja2.ext.do')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
-app.config['MYSQL_PASSWORD'] = 'nathaniel'
-app.config['MYSQL_PORT'] = 3308
+app.config['MYSQL_PASSWORD'] = 'lakandiwa123' 
+app.config['MYSQL_PORT'] = 3307
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MYSQL_DB'] = 'lakandiwa'
 app.config["REPORT_PATH"] = "reports/"
