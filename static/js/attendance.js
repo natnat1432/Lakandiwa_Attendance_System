@@ -160,9 +160,24 @@ $(document).ready(function() {
 
         
     });
+
+
     
 });
 
+function setDeleteModal(attendanceID){
+    document.getElementById("recordID").value = attendanceID;
+}
+
+function deleteRecord(){
+    data = document.getElementById("recordID").value;
+    page = parseInt(document.getElementById("page").value);
+    filter = document.getElementById("filter").value;
+    sort = document.getElementById("sort_form").value;
+    target = document.getElementById("target_attendance").value;
+
+    location.href = "/deleteRecord?attendanceID="+data+"&target="+target+'&filter='+filter+"&sort="+sort+"&page="+page;
+}
 function nextPage(){
     page = parseInt(document.getElementById("page").value)+1;
     filter = document.getElementById("filter").value;

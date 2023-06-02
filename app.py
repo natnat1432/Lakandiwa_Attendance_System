@@ -21,8 +21,9 @@ env.add_extension('jinja2.ext.do')
 app.jinja_env.add_extension('jinja2.ext.do')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
-app.config['MYSQL_PORT'] = 3307
+# app.config['MYSQL_PASSWORD'] = 'lakandiwa123'
+app.config['MYSQL_PASSWORD'] = 'nathaniel'
+app.config['MYSQL_PORT'] = 3308
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MYSQL_DB'] = 'lakandiwa'
 app.config["REPORT_PATH"] = "reports/"
@@ -928,6 +929,20 @@ def rejectsign(type:str, attendanceID:str):
     else:
         return abort(404, "Page not found")
 
+@app.route("/deleteRecord")
+def deleteRecord():
+    attendanceID = request.args.get("attendanceID")
+
+    target = request.args.get('target')
+    filter = request.args.get('filter')
+    sort = request.args.get('sort')
+    page = request.args.get('page')
+
+    delete = delete_data('attendance', 'attendanceID', attendanceID)
+
+    if delete:
+        return redirect(url_for('attendance', target=target, filter=filter, sort=sort, page=page))
+    
 @app.route("/attendance")
 def attendance():
     #delete forgotten stamps
