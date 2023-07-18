@@ -275,13 +275,53 @@ def get_total_month_rendered_hours(id_number, month, year)->dict:
     cur.close()
     return data
 
-def get_reports_month_rendered_hours(month, year)->dict:
+def get_reports_month_rendered_hours(month, year) -> dict:
     cur = mysql.connection.cursor()
-    cur.execute(f'SELECT CONCAT(member.lastname,", ", member.firstname," ", left(member.middlename,1),".") AS name, CONCAT(position.position_level, " ", position.position) AS position, SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered))) AS total_rendered, IF(HOUR(SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered))))>40,"Complete", "Incomplete") AS remarks from member,position,attendance  WHERE member.id_number = attendance.id_number AND member.positionID = position.positionID AND MONTH(attendance.time_in) = "{month}" AND YEAR(attendance.time_in) = "{year}" GROUP BY member.id_number ORDER BY total_rendered DESC')
-    data:dict = cur.fetchall()
+    cur.execute(f'''
+        SELECT CONCAT(member.lastname, ", ", member.firstname, " ", LEFT(member.middlename, 1), ".") AS name,
+               CONCAT(position.position_level, " ", position.position) AS position,
+               SEC_TO_TIME(SUM(TIME_TO_SEC(IFNULL(attendance.time_rendered, 0)))) AS total_rendered,
+               IF(HOUR(SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered)))) > 40, "Complete", "Incomplete") AS remarks
+        FROM member
+        LEFT JOIN attendance ON member.id_number = attendance.id_number 
+            AND MONTH(attendance.time_in) = %s AND YEAR(attendance.time_in) = %s
+        LEFT JOIN position ON member.positionID = position.positionID
+        GROUP BY member.id_number
+        ORDER BY
+            CASE CONCAT(position.position_level, " ", position.position)
+                
+               
+                WHEN 'Junior Staff Layout Artist' THEN 21
+                WHEN 'Junior Staff Cartoonist' THEN 20
+                WHEN 'Junior Staff Photojournalist' THEN 19
+                WHEN 'Junior Staff Writer' THEN 18
+                WHEN 'Senior Staff Layout Artist' THEN 17
+                WHEN 'Senior Staff Cartoonist' THEN 16
+                WHEN 'Senior Staff Photojournalist' THEN 15
+                WHEN 'Senior Staff Writer' THEN 14
+                WHEN 'Editorial Board Art Editor' THEN 13
+                WHEN 'Editorial Board Photo Editor' THEN 12
+                WHEN 'Editorial Board Graphics Editor' THEN 11
+                WHEN 'Editorial Board Online Editor' THEN 10
+                WHEN 'Editorial Board Feature Editor' THEN 9
+                WHEN 'Editorial Board News Editor' THEN 8
+                WHEN 'Editorial Board Ethics and Legal Standards Editor' THEN 7
+                WHEN 'Editorial Board Finance Manager' THEN 6
+                WHEN 'Editorial Board Creative Director' THEN 5
+                WHEN 'Editorial Board Planning and Research Director' THEN 4
+                WHEN 'Editorial Board Managing Director' THEN 3
+                WHEN 'Editorial Board Associate Editor' THEN 2
+                WHEN 'Editorial Board Editor in Chief' THEN 1
+                ELSE 22  -- For any other positions not mentioned in the hierarchy
+            END,
+            name  -- Add an additional condition to sort members within the same position alphabetically by name
+    ''', (month, year))
+    
+    data: dict = cur.fetchall()
     mysql.connection.commit()
     cur.close()
     return data
+
 
 def get_unsigned_time_in()->dict:
     cur = mysql.connection.cursor()
