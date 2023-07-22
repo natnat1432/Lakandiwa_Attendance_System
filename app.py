@@ -275,8 +275,95 @@ def get_total_month_rendered_hours(id_number, month, year)->dict:
     cur.close()
     return data
 
-def get_reports_month_rendered_hours(month, year) -> dict:
+def get_reports_month_weekly(month,year) -> dict:
     cur = mysql.connection.cursor()
+    cur.execute(f'''
+    SELECT 
+    CONCAT(member.firstname, ' ', member.middlename, ' ', member.lastname) AS member_name,
+    CONCAT(position.position_level, " ", position.position) AS position,
+    SEC_TO_TIME(COALESCE(SUM(TIME_TO_SEC(attendance.time_rendered)), 0)) AS time_total,
+    IF(HOUR(SEC_TO_TIME(COALESCE(SUM(TIME_TO_SEC(attendance.time_rendered)), 0))) > 10, "Complete", "Incomplete") AS remarks,
+    week_numbers.week_number,
+    {year} AS year,
+    IFNULL(
+        CONCAT(
+            DATE_FORMAT(MIN(attendance.time_in), '%M %e'),
+            ' - ',
+            DATE_FORMAT(MAX(attendance.time_in), '%M %e')
+        ), 'None'
+    ) AS week_date
+        FROM
+            member
+        CROSS JOIN (
+            SELECT WEEK(time_in) AS week_number
+            FROM attendance
+            WHERE MONTH(time_in) = {month} AND YEAR(time_in) = {year}
+            GROUP BY week_number
+        ) AS week_numbers
+        LEFT JOIN attendance ON member.id_number = attendance.id_number AND
+                                WEEK(attendance.time_in) = week_numbers.week_number
+                                AND MONTH(attendance.time_in) = {month} AND YEAR(attendance.time_in) = {year}
+        LEFT JOIN position ON member.positionID = position.positionID
+        GROUP BY
+            member.id_number,
+            week_numbers.week_number
+        ORDER BY
+            week_numbers.week_number,
+            CASE CONCAT(position.position_level, " ", position.position)
+                WHEN 'Junior Staff Layout Artist' THEN 21
+                WHEN 'Junior Staff Cartoonist' THEN 20
+                WHEN 'Junior Staff Photojournalist' THEN 19
+                WHEN 'Junior Staff Writer' THEN 18
+                WHEN 'Senior Staff Layout Artist' THEN 17
+                WHEN 'Senior Staff Cartoonist' THEN 16
+                WHEN 'Senior Staff Photojournalist' THEN 15
+                WHEN 'Senior Staff Writer' THEN 14
+                WHEN 'Editorial Board Art Editor' THEN 13
+                WHEN 'Editorial Board Photo Editor' THEN 12
+                WHEN 'Editorial Board Graphics Editor' THEN 11
+                WHEN 'Editorial Board Online Editor' THEN 10
+                WHEN 'Editorial Board Feature Editor' THEN 9
+                WHEN 'Editorial Board News Editor' THEN 8
+                WHEN 'Editorial Board Ethics and Legal Standards Editor' THEN 7
+                WHEN 'Editorial Board Finance Manager' THEN 6
+                WHEN 'Editorial Board Creative Director' THEN 5
+                WHEN 'Editorial Board Planning and Research Director' THEN 4
+                WHEN 'Editorial Board Managing Director' THEN 3
+                WHEN 'Editorial Board Associate Editor' THEN 2
+                WHEN 'Editorial Board Editor in Chief' THEN 1
+                ELSE 22  -- For any other positions not mentioned in the hierarchy
+            END;
+''')
+    data: dict = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return data
+
+def get_month_info(month,year) -> dict:
+    cur = mysql.connection.cursor()
+    cur.execute(f'''
+    SELECT
+    WEEK(time_in) AS week_number,
+    DATE_FORMAT(MIN(attendance.time_in), '%M %e') AS week_start,
+    DATE_FORMAT(MAX(attendance.time_in), '%M %e') AS week_end
+        FROM
+            attendance
+        WHERE
+            MONTH(time_in) = {month} AND YEAR(time_in) = {year}
+        GROUP BY
+            week_number
+        ORDER BY
+            week_number;
+
+    ''')
+    data:dict = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return data
+
+def get_reports_month_rendered_hours(month, year, filter) -> dict:
+    cur = mysql.connection.cursor()
+    
     cur.execute(f'''
         SELECT CONCAT(member.lastname, ", ", member.firstname, " ", LEFT(member.middlename, 1), ".") AS name,
                CONCAT(position.position_level, " ", position.position) AS position,
@@ -289,8 +376,6 @@ def get_reports_month_rendered_hours(month, year) -> dict:
         GROUP BY member.id_number
         ORDER BY
             CASE CONCAT(position.position_level, " ", position.position)
-                
-               
                 WHEN 'Junior Staff Layout Artist' THEN 21
                 WHEN 'Junior Staff Cartoonist' THEN 20
                 WHEN 'Junior Staff Photojournalist' THEN 19
@@ -1226,6 +1311,7 @@ def reports():
         return redirect(url_for('login', message= 'Login first'))
     title = "Reports"
     date = request.args.get('date')
+    filter_member = request.args.get('filter')
     currentMonth = datetime.now().month
     currentYear = datetime.now().year
     mnth = str(currentMonth)
@@ -1238,7 +1324,7 @@ def reports():
         if currentMonth < 10:
             mnth = f'0{currentMonth}'
         date = f'{currentYear}-{mnth}'
-
+    
     print("DATE", date)
     log_user = session['user_id']
     error = request.args.get('error')
@@ -1254,8 +1340,18 @@ def reports():
     for each in month_totalhours:
         each['total_rendered'] = str(format_timedelta(each['total_rendered']))
     
+    
+    month_weeklyhours = get_reports_month_weekly(date_data[1], date_data[0])
+
+    for each in month_weeklyhours:
+        each['time_total'] = str(format_timedelta(each['time_total']))
+
+    month_info = get_month_info(date_data[1], date_data[0])
+
     return render_template("reports.html",
     title = title,
+    month_weeklyhours = month_weeklyhours,
+    month_info = month_info,
     month_totalhours = month_totalhours,
     log_user = log_user,
     error =  error,
