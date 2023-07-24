@@ -6,12 +6,12 @@ from app import get_reports_month_rendered_hours, format_timedelta, get_month_in
 
 
 
-def generatedoc(month,year):
+def generatedoc(month,year, filter_member):
     # Initialise the Word document
     doc = docx.Document()
     month = int(month)
     year = int(year)
-    month_totalhours = get_reports_month_rendered_hours(month, year)
+    month_totalhours = get_reports_month_rendered_hours(month, year, filter_member)
     month_totalhours = list(month_totalhours)
     
     members = []
@@ -58,7 +58,7 @@ def generatedoc(month,year):
             row.cells[j].text = str(cell)
 
 
-    month_weekly_totalhours = get_reports_month_weekly(month, year)
+    month_weekly_totalhours = get_reports_month_weekly(month, year, filter_member)
     month_weekly_totalhours = list(month_weekly_totalhours)
     month_info = get_month_info(month, year)
 
@@ -103,4 +103,5 @@ def generatedoc(month,year):
                 cell = wdf.iat[i, j]
                 row.cells[j].text = str(cell)
     # Save the Word doc
-    doc.save(f'reports/{word_month}_{year}_DTR_report.docx')
+    filter_string = f'{filter_member}_'
+    doc.save(f'reports/{filter_string if filter_member != "all" else "" }{word_month}_{year}_DTR_report.docx')

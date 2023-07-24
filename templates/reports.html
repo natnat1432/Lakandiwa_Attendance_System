@@ -15,6 +15,7 @@
   <div class="flexer">
     <form action="/generatereport" method="POST">
       <input type="month" class="form-control" name="value_date" value="{{date}}" hidden />
+      <input type="text" class="form-control" name="filter_member" value="{{filter_member}}" hidden />
       <button type="submit" class="btn btn-icon btn-3 bg-gradient-success center-container" style="width:200px;"
         type="button">
         <span class="btn-inner--icon"><i class="fa-solid fa-file-word"></i></span>
@@ -28,9 +29,9 @@
     <div class="input-group input-group-static mb-4 w-20 ms-4">
       <label for="exampleFormControlSelect1" class="ms-0">Filter</label>
       <select name="filter_member" id="filter_member" class="form-control">
-        <option value="all">All</option>
+        <option value="all" {% if filter_member == 'all' %}selected{%endif%}>All</option>
         {% for each in members %}
-        <option value="{{each.id_number}}">{{each.lastname}}, {{each.firstname}} {{each.middlename | first}}.</option>
+        <option value="{{each.id_number}}" {% if filter_member | string == each.id_number  | string %}selected{%endif%}>{{each.lastname}}, {{each.firstname}} {{each.middlename | first}}.</option>
         {% endfor %}
       </select>
     </div>

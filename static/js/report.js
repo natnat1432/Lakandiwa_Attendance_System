@@ -4,6 +4,11 @@ $(document).ready(function() {
             window.location.href = '/reports?date='+data;
     })
 
-        
+       
+    $("#filter_member").change(function(){
+        var data = $("#month_year").val();
+        var filter = $(this).val();
+        window.location.href = '/reports?date='+data+'&filter='+filter;
+    });
     });
 

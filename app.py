@@ -275,8 +275,9 @@ def get_total_month_rendered_hours(id_number, month, year)->dict:
     cur.close()
     return data
 
-def get_reports_month_weekly(month,year) -> dict:
+def get_reports_month_weekly(month,year, filter_member) -> dict:
     cur = mysql.connection.cursor()
+    filter_string = f'WHERE member.id_number = {filter_member}'
     cur.execute(f'''
     SELECT 
     CONCAT(member.firstname, ' ', member.middlename, ' ', member.lastname) AS member_name,
@@ -304,6 +305,7 @@ def get_reports_month_weekly(month,year) -> dict:
                                 WEEK(attendance.time_in) = week_numbers.week_number
                                 AND MONTH(attendance.time_in) = {month} AND YEAR(attendance.time_in) = {year}
         LEFT JOIN position ON member.positionID = position.positionID
+        {filter_string if filter_member != 'all' else '' }
         GROUP BY
             member.id_number,
             week_numbers.week_number
@@ -363,7 +365,8 @@ def get_month_info(month,year) -> dict:
 
 def get_reports_month_rendered_hours(month, year, filter) -> dict:
     cur = mysql.connection.cursor()
-    
+    filter_string = f"WHERE member.id_number = {filter} "
+
     cur.execute(f'''
         SELECT CONCAT(member.lastname, ", ", member.firstname, " ", LEFT(member.middlename, 1), ".") AS name,
                CONCAT(position.position_level, " ", position.position) AS position,
@@ -371,8 +374,9 @@ def get_reports_month_rendered_hours(month, year, filter) -> dict:
                IF(HOUR(SEC_TO_TIME(SUM(TIME_TO_SEC(attendance.time_rendered)))) > 40, "Complete", "Incomplete") AS remarks
         FROM member
         LEFT JOIN attendance ON member.id_number = attendance.id_number 
-            AND MONTH(attendance.time_in) = %s AND YEAR(attendance.time_in) = %s
-        LEFT JOIN position ON member.positionID = position.positionID
+            AND MONTH(attendance.time_in) = {month} AND YEAR(attendance.time_in) = {year}
+        LEFT JOIN position ON member.positionID = position.positionID 
+        { filter_string if filter != 'all' else ''}
         GROUP BY member.id_number
         ORDER BY
             CASE CONCAT(position.position_level, " ", position.position)
@@ -400,7 +404,7 @@ def get_reports_month_rendered_hours(month, year, filter) -> dict:
                 ELSE 22  -- For any other positions not mentioned in the hierarchy
             END,
             name  -- Add an additional condition to sort members within the same position alphabetically by name
-    ''', (month, year))
+    ''')
     
     data: dict = cur.fetchall()
     mysql.connection.commit()
@@ -1320,10 +1324,13 @@ def reports():
     min = str(data_old_new['min'])[0:7]
     max = str(data_old_new['max'])[0:7]
 
-    if date is None:
+    if date is None or date == None:
         if currentMonth < 10:
             mnth = f'0{currentMonth}'
         date = f'{currentYear}-{mnth}'
+
+    if not filter_member:
+        filter_member = 'all'
     
     print("DATE", date)
     log_user = session['user_id']
@@ -1336,12 +1343,12 @@ def reports():
 
     date_data = date.split('-')
     
-    month_totalhours = get_reports_month_rendered_hours(date_data[1], date_data[0])
+    month_totalhours = get_reports_month_rendered_hours(date_data[1], date_data[0], filter_member)
     for each in month_totalhours:
         each['total_rendered'] = str(format_timedelta(each['total_rendered']))
     
     
-    month_weeklyhours = get_reports_month_weekly(date_data[1], date_data[0])
+    month_weeklyhours = get_reports_month_weekly(date_data[1], date_data[0], filter_member)
 
     for each in month_weeklyhours:
         each['time_total'] = str(format_timedelta(each['time_total']))
@@ -1355,6 +1362,7 @@ def reports():
     month_totalhours = month_totalhours,
     log_user = log_user,
     error =  error,
+    filter_member = filter_member,
     success = success,
     accountuser = accountuser,
     members = members ,
@@ -1370,15 +1378,17 @@ def reports():
 def generatereport():
 
     date = request.form['value_date']
+    filter_member = request.form['filter_member']
     final_date = date.split('-')
 
     #delete forgotten stamps
     void_forgotten_stamps()
-    docgenerator.generatedoc(int(final_date[1]), int(final_date[0]))
+    docgenerator.generatedoc(int(final_date[1]), int(final_date[0]), filter_member)
     try:
         month = calendar.month_name[int(final_date[1])]
         year = int(final_date[0])
-        filename = f'{month}_{year}_DTR_report.docx'
+        filter_string = f'{filter_member}_'
+        filename = f'{filter_string if filter_member != "all" else "" }{month}_{year}_DTR_report.docx'
         return send_from_directory(directory=app.config["REPORT_PATH"], path=filename, as_attachment=True)
     except FileNotFoundError:
         abort(404)
