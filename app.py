@@ -21,8 +21,8 @@ env.add_extension('jinja2.ext.do')
 app.jinja_env.add_extension('jinja2.ext.do')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'lakandiwa123' 
-app.config['MYSQL_PORT'] = 3307
+app.config['MYSQL_PASSWORD'] = '@farmleaseoperationsmanagement2022' 
+app.config['MYSQL_PORT'] = 3308
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MYSQL_DB'] = 'lakandiwa'
 app.config["REPORT_PATH"] = "reports/"
@@ -94,6 +94,24 @@ def format_timedelta(td):
         return '{:d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
     else:
         return '{:d}:{:02d}:{:02d}'.format(0, 0, 0)
+    
+def getFormatTime(td):
+    if td is not None:
+        return td.strftime('%I:%M %p | %B %d, %Y')
+    else:
+        return 'None'
+    
+def getMemberNamePosition(id):
+    if id is not None:
+        members = get_all_data('member')
+        positions = get_all_data('position')
+        for each in members:
+            if str(each['id_number']) == str(id):
+                for pos in positions:
+                    if pos['positionID'] == each['positionID']:
+                        return f"{each['lastname']}, {each['firstname'] } {each['middlename'][0].upper() if each['middlename'] is not None else ''} \n {pos['position_level']} {pos['position']}"
+    else:
+        return 'None'
 #============================================================================================
 #Database
 def get_data(table:str, field:str, value:str)->dict:
@@ -123,6 +141,13 @@ def get_all_data(table:str)->dict:
     cur.close()
     return data
 
+def get_all_attendance_month(month,year,id_number)->dict :
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT * FROM `attendance` WHERE `id_number` = {id_number} AND MONTH(`time_in`) = {month} AND YEAR(`time_in`) = {year} ORDER BY `time_in` ASC")
+    data:dict = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return data
 
 def get_today_data_attendance(id_number)->dict:
     cur = mysql.connection.cursor()
@@ -1355,8 +1380,13 @@ def reports():
 
     month_info = get_month_info(date_data[1], date_data[0])
 
-    return render_template("reports.html",
-    title = title,
+    daily_attendance = None
+    if filter_member is not None and filter_member != 'all':
+        daily_attendance = get_all_attendance_month(date_data[1], date_data[0], filter_member)
+
+
+    return render_template("reports.html", title = title,
+    daily_attendance = daily_attendance,
     month_weeklyhours = month_weeklyhours,
     month_info = month_info,
     month_totalhours = month_totalhours,
@@ -1387,7 +1417,12 @@ def generatereport():
     try:
         month = calendar.month_name[int(final_date[1])]
         year = int(final_date[0])
-        filter_string = f'{filter_member}_'
+        member_name = None
+        filter_string = ""
+        if filter_member != "all" and filter_member is not None:
+            member_name = get_data('member','id_number',filter_member)
+            filter_string = f'{member_name["lastname"].upper()}_{member_name["firstname"].upper()}_'
+
         filename = f'{filter_string if filter_member != "all" else "" }{month}_{year}_DTR_report.docx'
         return send_from_directory(directory=app.config["REPORT_PATH"], path=filename, as_attachment=True)
     except FileNotFoundError:

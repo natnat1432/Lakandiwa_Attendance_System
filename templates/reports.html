@@ -147,9 +147,186 @@
             </table>
           </div>
         </div>
+    
       </div>
     </div>
   </div>
 </div>
 {% endfor %}
+{% if daily_attendance is defined and daily_attendance is not none %}
+<div class="container-fluid py-4">
+  <br><br>
+ 
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Daily Attendance</h6>
+          </div>
+        </div>
+    
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+
+                <tr>
+
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time In
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Countersigned By</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Work Done
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Out
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Countersigned By</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Signed By
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time
+                    Rendered</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr></tr>
+                {% for total in daily_attendance %}
+                <tr>
+          
+                  <td class="align-middle text-center">
+                    <p class="text-xs font-weight-bold mb-0">{{total.time_in.strftime('%I:%M %p')}}</p>
+                    <p class="text-xs text-secondary mb-0">{{total.time_in.strftime('%B %d, %Y')}}</p>
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if total.countersign_time_in == each.id_number%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if each.positionID == position.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if total.countersign_time_in is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No countersign</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == total.signature_time_in%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if total.signature_time_in is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No sign yet</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% if total.work_done is not none%}
+                    <textarea style="resize: none; width:200px; white-space: pre-wrap; height:100px; border:1px solid gray; outline:none; border-radius:5px;  padding:5px;"
+                      readonly>{{total.work_done}}</textarea>
+                    {% else %}
+                    <textarea style="resize:none; width:200px; white-space: pre-wrap; height:100px; border:1px solid gray;  outline:none; border-radius:5px; padding:5px;"
+                      readonly>No work done yet</textarea>
+
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% if total.time_out is not none %}
+                    <p class="text-xs font-weight-bold mb-0">{{total.time_out.strftime('%I:%M %p')}}</p>
+                    <p class="text-xs text-secondary mb-0">{{total.time_out.strftime('%B %d, %Y')}}</p>
+                    {% else %}
+                    <span class="text-secondary text-xs font-weight-bold"><span class="badge bg-gradient-danger">No time
+                        out yet</span></span>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == total.countersign_time_out%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if total.countersign_time_out is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No countersign</span>
+                    </p>
+                    {% endif %}
+                  </td>
+                  <td class="align-middle text-center">
+                    {% for each in members%}
+                    {% if each.id_number == total.signature_time_out%}
+                    <p class="text-xs font-weight-bold mb-0">{{each.lastname}}, {{each.firstname }} {{each.middlename |
+                      first}}.</p>
+                    {% for position in positions %}
+                    {% if position.positionID == each.positionID %}
+                    <p class="text-xs text-secondary mb-0">{{position.position_level}} {{position.position}}</p>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if total.signature_time_out is none %}
+                    <p class="text-xs font-weight-bold mb-0">
+                      <span class="badge bg-gradient-danger">No sign yet</span>
+                    </p>
+                    {% endif %}
+                  </td>
+
+                  <td class="align-middle text-center">
+
+                    {% if total.time_rendered is not none %}
+                    <span class="text-secondary text-xs font-weight-bold">{{total.time_rendered}}</span>
+                    {% else %}
+                    <span class="text-secondary text-xs font-weight-bold">
+                      <span class="badge bg-gradient-danger">Incomplete</span>
+                    </span>
+                    {% endif %}
+                  </td>
+      
+
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}
